@@ -9,7 +9,6 @@ function player(x, y, width, height) {
   this.centerY = 0;
 
 	this.playerSprite = document.getElementById('playerSprite');
-
 	this.deagle = document.getElementById('deagle');
 
   this.grounded = false;
@@ -19,7 +18,7 @@ function player(x, y, width, height) {
   this.yspeed = 0;
   this.xfriction = 0.9;
   this.yfriction = 0.9;
-  this.maxSpeed = 9;
+  this.maxSpeed = 7;
   this.maxFall = 20;
   this.active = true;
 
@@ -81,7 +80,7 @@ function player(x, y, width, height) {
 
   this.movment = function() {if (this.active) {
     if (upKey && this.grounded == true) {
-      this.yspeed -= 17;
+      this.yspeed -= 15;
       this.jump ++;
       this.grounded = false;
     }
@@ -189,7 +188,6 @@ function player(x, y, width, height) {
   }
 
   this.devStuff = function() {
-    ctx = myGameArea.context;
     ctx.beginPath();
 		ctx.globalAlpha = 0.2;
     ctx.fillStyle = "red";

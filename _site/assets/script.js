@@ -5,6 +5,7 @@ var cameraMovement1;
 
 var borders = [];
 var bullets = [];
+var enemies = [];
 
 var Horizontal = 0;
 var Vertical = 0;
@@ -20,23 +21,24 @@ var mouseYevent = 0;
 
 var progress, fps, DeltaTime, lastRender = 0;
 
+var backgroundImage = document.getElementById('background');
+
 function startGame() {
     myGameArea.start();
-    player1 = new player(myGameArea.canvasWidth / 2, myGameArea.canvasHeight / 2 - 1000);
+    player1 = new player(0, 0);
     cameraMovement1 = new cameraMovement();
 
-    for (let i = 0; i < 12; i++) {
-        borders.push(new Border(-100 + 30 * i, 300, 30, 30));
+    for (var y = 0; y < mapH; y++) {
+        for (var x = 0; x < mapW; x++) {
+            if (gameMap[((y*mapW)+x)] == 1) {
+                borders.push(new Border(x*tileW, y*tileH, 30, 30, "floor"));
+            }
+            if (gameMap[((y*mapW)+x)] == 2) {
+                borders.push(new Border(x*tileW, y*tileH, 30, 30, "spawn"));
+            }
+        }
     }
-    for (let i = 0; i < 6; i++) {
-        borders.push(new Border(260 + 30 * i, 330, 30, 30));
-    }
-    for (let i = 0; i < 20; i++) {
-        borders.push(new Border(440 + 30 * i, 300, 30, 30));
-    }
-    for (let i = 0; i < 3; i++) {
-        borders.push(new Border(170 + 30 * i, 220, 30, 30));
-    }
+    enemies.push(new enemie(10, 0));
 }
 
 var myGameArea = {
@@ -64,6 +66,9 @@ function update() {
     for (let i = 0; i < borders.length; i++) {
         borders[i].update();
     }
+    for (let i = 0; i < enemies.length; i++) {
+        enemies[i].update();
+    }
     for (let i = 0; i < bullets.length; i++) {
         bullets[i].update(i);
     }
@@ -72,14 +77,18 @@ function update() {
 function draw() {
     let ctx = myGameArea.context;
     ctx.clearRect(-cameraMovement1.x, -cameraMovement1.y, myGameArea.canvasWidth, myGameArea.canvasHeight);
-		drawFps();
+    background();
     for (let i = 0; i < borders.length; i++) {
         borders[i].draw();
     }
     for (let i = 0; i < bullets.length; i++) {
         bullets[i].draw();
     }
+    for (let i = 0; i < enemies.length; i++) {
+        enemies[i].draw();
+    }
     player1.draw();
+    drawFps();
 }
 
 function drawFps(){
@@ -132,4 +141,11 @@ function BulletHits(r1, r2) {
     } else {
         return true;
     }
+}
+
+function background() {
+    let ctx = myGameArea.context;
+    ctx.fillStyle = "red";
+    ctx.fillRect(-cameraMovement1.x, -cameraMovement1.y, myGameArea.canvasWidth, myGameArea.canvasHeight);
+    ctx.drawImage(backgroundImage, -cameraMovement1.x, -cameraMovement1.y, myGameArea.canvasWidth, myGameArea.canvasHeight);
 }

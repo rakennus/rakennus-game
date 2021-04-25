@@ -1,4 +1,4 @@
-function player(x, y, width, height) {
+function enemie(x, y, width, height) {
   this.width = 30;
   this.height = 56;
   this.x = x;
@@ -8,8 +8,8 @@ function player(x, y, width, height) {
   this.centerX = 0;
   this.centerY = 0;
 
-	this.playerSprite = document.getElementById('playerSprite');
-	this.deagle = document.getElementById('deagle');
+	this.playerSprite = document.getElementById('jesus');
+	this.lemon = document.getElementById('lemon');
 
   this.grounded = false;
   this.xspeedIndep = 0;
@@ -22,15 +22,13 @@ function player(x, y, width, height) {
   this.maxFall = 20;
   this.active = true;
 
-	this.weaponWidth = 80;
-	this.weaponHeight = 64;
+	this.weaponWidth = 20;
+	this.weaponHeight = 20;
 	this.angle = 0;
 
 	this.aimAngleOffset = 0;
 	this.aimX = 0;
 	this.aimY = 0;
-	this.aimOffsetX = 10;
-	this.aimOffsetY = -10;
 
   this.shootingCooldown = 0;
 
@@ -42,10 +40,10 @@ function player(x, y, width, height) {
   this.variableUpdate = function() {
     this.centerX = this.x + this.width/2;
     this.centerY = this.y + this.height/2;
-		this.aimX = this.centerX + this.aimOffsetX + Math.cos((this.angle +90 +this.aimAngleOffset)* Math.PI / 180)*40;
-		this.aimY = this.centerY + this.aimOffsetY + Math.sin((this.angle +90 +this.aimAngleOffset)* Math.PI / 180)*40;
+	  this.aimX = this.centerX + Math.cos((this.angle +90)* Math.PI / 180)*10;
+	  this.aimY = this.centerY + Math.sin((this.angle +90)* Math.PI / 180)*10;
 
-    this.angle = -Math.atan2(mouseX - this.centerX, mouseY - this.centerY +25) / Math.PI * 180;
+    this.angle = (-Math.atan2(player1.x - this.centerX, player1.y - this.centerY +25) / Math.PI * 180) -20;
 		
     if (this.angle < 0) {
       this.aimAngleOffset = -15;
@@ -58,27 +56,25 @@ function player(x, y, width, height) {
 		this.draw = function() {
 			this.drawPlayer();
 			this.drawWeapon();
-		  //this.devStuff();
 		}
 		this.drawPlayer = function() {
-		ctx = myGameArea.context;
-		ctx.save();
-		ctx.translate(this.centerX, this.centerY);
-		if (this.angle < 0) {ctx.scale(1, 1);} else {ctx.scale(-1, 1);}
-		ctx.drawImage(this.playerSprite, 18, 4, 30, 56, this.width/-2 +this.playerSpriteOffset, this.height/-2, this.width, this.height);
-		ctx.restore();
+      ctx.save();
+      ctx.translate(this.centerX, this.centerY);
+      if (this.angle < 0) {ctx.scale(-1, 1);} else {ctx.scale(1, 1);}
+      ctx.drawImage(this.playerSprite, 12, 2, 36, 60, this.width/-2 +this.playerSpriteOffset, this.height/-2, this.width, this.height);
+      ctx.restore();
 		}
 		this.drawWeapon = function() {
-		ctx = myGameArea.context;
-		ctx.save();
-		ctx.translate(this.centerX + this.aimOffsetX, this.centerY + this.aimOffsetY);
-		ctx.rotate((this.angle -90) * Math.PI / 180);
-		if (this.angle < 0) {ctx.scale(1, -1);} else {ctx.scale(1, 1);}
-		ctx.drawImage(this.deagle, -this.weaponWidth +2, this.weaponHeight/-2 -2, this.weaponWidth, this.weaponHeight);
-		ctx.restore();
+      ctx.save();
+      ctx.translate(this.centerX, this.centerY);
+      ctx.rotate((this.angle -90) * Math.PI / 180);
+      if (this.angle < 0) {ctx.scale(1, -1);} else {ctx.scale(1, 1);}
+      ctx.drawImage(this.lemon, this.weaponWidth/-2 -20, this.weaponHeight/-2, this.weaponWidth, this.weaponHeight);
+      ctx.restore();
 		}
 
   this.movment = function() {if (this.active) {
+    /*
     if (upKey && this.grounded == true) {
       this.yspeed -= 15;
       this.jump ++;
@@ -96,7 +92,7 @@ function player(x, y, width, height) {
     } else if (leftKey) {
       this.xspeed --;
     }
-
+    */
     this.yspeed += 1;
 
     if (this.xspeed > this.maxSpeed) {
@@ -174,28 +170,15 @@ function player(x, y, width, height) {
     this.y += this.yspeedIndep;
     this.x += this.xspeedIndep;
   }}
+
   this.shooting = function(){
-    if (leftClick == true && this.shootingCooldown <= 0) {
-      bullets.push(new Bullet(player1.aimX, player1.aimY, player1.angle));
-      this.xspeed -= Math.sin(Math.atan2(mouseX - player1.aimX, mouseY - player1.aimY))*2;
-      this.yspeed -= Math.cos(Math.atan2(mouseX - player1.aimX, mouseY - player1.aimY))*5;
+    if (this.shootingCooldown <= 0) {
+      bullets.push(new Grenade(this.aimX, this.aimY, this.angle));
       ctx = myGameArea.context;
-      this.shootingCooldown = 16;
+      this.shootingCooldown = 120;
     }
     else {
       this.shootingCooldown --;
     }
-  }
-
-  this.devStuff = function() {
-    ctx.beginPath();
-		ctx.globalAlpha = 0.2;
-    ctx.fillStyle = "red";
-    ctx.fillRect(this.x, this.y, this.width, this.height);
-		ctx.globalAlpha = 1;
-    ctx.beginPath();
-    ctx.moveTo(this.aimX	, this.aimY);
-    ctx.lineTo(mouseX, mouseY);
-    ctx.stroke();
   }
 }

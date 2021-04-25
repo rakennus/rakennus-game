@@ -5,13 +5,20 @@ function Border(x, y, width, height, type) {
     this.y = y;
     this.type = type;
 
+    this.floor = document.getElementById('floor');
+
     this.update = function() {
         this.draw();
     }
     
     this.draw = function() {
         let ctx = myGameArea.context;
-        ctx.fillStyle = "blue";
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        if (this.type == "spawn") {
+            ctx.fillStyle = "blue";            
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
+        if (this.type == "floor") {
+            ctx.drawImage(this.floor, 0, 0, 16, 16, this.x, this.y, this.width, this.height);            
+        }
     }
 }

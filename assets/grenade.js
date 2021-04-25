@@ -1,16 +1,17 @@
-function Bullet(x, y, angle) {
+function Grenade(x, y, angle) {
     this.x = x;
     this.y = y;
 
-    this.height = 32;
-    this.width = 32;
+    this.height = 20;
+    this.width = 20;
 
-    this.nemo = document.getElementById('nemo');
+    this.lemon = document.getElementById('lemon');
 
-    this.velocityX = Math.sin(-(angle) * Math.PI / 180) * 20;
-    this.velocityY = Math.cos(-(angle) * Math.PI / 180) * 20;
+    this.velocityX = Math.sin(-(angle) * Math.PI / 180) * 4;
+    this.velocityY = Math.cos(-(angle) * Math.PI / 180) * 4;
 
-    this.timeLeft = 120;
+    this.timeLeft = 80;
+    this.explode = false;
 
     this.update = function(index) {
         this.velocityY += 1;
@@ -41,14 +42,13 @@ function Bullet(x, y, angle) {
                 while (checkIntersection(horizontalRect, borderRect)) {
                     horizontalRect.x -= this.velocityX;
                 }
-                this.velocityX = 0;
-                this.timeLeft = 20;
+                this.velocityX = -this.velocityX;
             }
             if (checkIntersection(verticalRect, borderRect)) {
                 while (checkIntersection(verticalRect, borderRect)) {
                     verticalRect.y -= Math.sign(this.velocityY);
                 }
-                this.velocityY = 0;
+                this.velocityY = -this.velocityY;
             }
         }
         if (this.timeLeft <= 0) {
@@ -60,27 +60,8 @@ function Bullet(x, y, angle) {
     }
     
     this.draw = function() {
-        ctx = myGameArea.context;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, 3, 0, Math.PI * 2, false);
-        ctx.fillStyle = "black";
-        ctx.fill();
-        ctx.closePath();
-
-        ctx.drawImage(this.nemo, 0, 0, 64, 64, this.x - this.width/2, this.y - this.height/2, this.width, this.height);
-    }
-}
-
-function BulletHits(r1, r2) {
-    if(r1.x >= r2.x + r2.width){
-        return false;
-    } else if(r1.x <= r2.x){
-        return false;
-    } else if(r1.y >= r2.y + r2.height){
-        return false;
-    } else if(r1.y <= r2.y){
-        return false;
-    } else {
-        return true;
+        if (!this.explode) {
+            ctx.drawImage(this.lemon, 0, 0, 64, 64, this.x - this.width/2, this.y - this.height/2, this.width, this.height);
+        }
     }
 }

@@ -5,6 +5,8 @@ var cameraMovement1;
 
 var borders = [];
 var bullets = [];
+var grenades = [];
+var enemies = [];
 
 var Horizontal = 0;
 var Vertical = 0;
@@ -37,6 +39,7 @@ function startGame() {
             }
         }
     }
+    enemies.push(new enemie(100, 0));
 }
 
 var myGameArea = {
@@ -64,8 +67,14 @@ function update() {
     for (let i = 0; i < borders.length; i++) {
         borders[i].update();
     }
+    for (let i = 0; i < enemies.length; i++) {
+        enemies[i].update();
+    }
     for (let i = 0; i < bullets.length; i++) {
         bullets[i].update(i);
+    }
+    for (let i = 0; i < grenades.length; i++) {
+        grenades[i].update(i);
     }
     player1.update();
 }
@@ -79,6 +88,12 @@ function draw() {
     for (let i = 0; i < bullets.length; i++) {
         bullets[i].draw();
     }
+    for (let i = 0; i < enemies.length; i++) {
+        enemies[i].draw();
+    }
+    for (let i = 0; i < grenades.length; i++) {
+        grenades[i].draw();
+    }
     player1.draw();
     drawFps();
 }
@@ -88,51 +103,6 @@ function drawFps(){
     ctx.font = '20px Arial';
     ctx.fillStyle = 'lightgreen';
     ctx.fillText("FPS: " + fps, 10-cameraMovement1.x, 25-cameraMovement1.y);
-}
-
-
-function checkIntersection(r1, r2) {
-    if(r1.x >= r2.x + r2.width){
-        return false;
-    } else if(r1.x + r1.width <= r2.x){
-        return false;
-    } else if(r1.y >= r2.y + r2.height){
-        return false;
-    } else if(r1.y + r1.height <= r2.y){
-        return false;
-    } else {
-        return true;
-    }
-}
-
-function groundCheck(r1, r2) {if (r1.y + r1.height <= r2.y +1) {return true;}}
-
-function inAir(r1) { let a = true;
-	for (var i = 0; i < borders.length; i++) {
-		let r2 = {
-			x: borders[i].x,
-			y: borders[i].y,
-			width: borders[i].width,
-			height: borders[i].height
-		}
-		if(r1.x <= r2.x + r2.width && r1.x + r1.width >= r2.x && r1.y <= r2.y + r2.height && r1.y + r1.height >= r2.y){
-        a = false;
-        }
-	} return a;
-}
-
-function BulletHits(r1, r2) {
-    if(r1.x >= r2.x + r2.width){
-        return false;
-    } else if(r1.x <= r2.x){
-        return false;
-    } else if(r1.y >= r2.y + r2.height){
-        return false;
-    } else if(r1.y <= r2.y){
-        return false;
-    } else {
-        return true;
-    }
 }
 
 function background() {

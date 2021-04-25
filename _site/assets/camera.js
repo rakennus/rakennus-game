@@ -26,10 +26,10 @@ function cameraMovement() {
 
         let ctx = myGameArea.context;
         ctx.translate(this.x, this.y);
-				//this.draw();
+		this.draw();
     }
-		/*
-		this.draw = function() {
+    
+    this.draw = function() {
         let ctx = myGameArea.context;
         ctx.globalAlpha = 0.2;
         ctx.fillStyle = "red";
@@ -37,5 +37,5 @@ function cameraMovement() {
         ctx.fillStyle = "green";
         ctx.fillRect(myGameArea.canvasWidth / 2 - this.boxWidth / 2 + player1.width / 2, myGameArea.canvasHeight / 2 - this.boxHeight / 2 + player1.height / 2, this.boxWidth - player1.width, this.boxHeight - player1.height);
         ctx.globalAlpha = 1;
-    }*/
+    }
 }
