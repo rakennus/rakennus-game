@@ -38,17 +38,28 @@ function Bullet(x, y, angle) {
             }
       
             if (checkIntersection(horizontalRect, borderRect)) {
-                while (checkIntersection(horizontalRect, borderRect)) {
-                    horizontalRect.x -= this.velocityX;
-                }
                 this.velocityX = 0;
                 this.timeLeft = 20;
             }
             if (checkIntersection(verticalRect, borderRect)) {
-                while (checkIntersection(verticalRect, borderRect)) {
-                    verticalRect.y -= Math.sign(this.velocityY);
-                }
                 this.velocityY = 0;
+            }
+        }
+        for (let i = 0; i < enemies.length; i++) {
+            let enemie = {
+              x: enemies[i].x,
+              y: enemies[i].y,
+              width: enemies[i].width,
+              height: enemies[i].height,
+            }
+      
+            if (checkIntersection(horizontalRect, enemie)) {
+                bullets.splice(index, 1);
+                enemies.splice(i, 1);
+            }
+            if (checkIntersection(verticalRect, enemie)) {
+                bullets.splice(index, 1);
+                enemies.splice(i, 1);
             }
         }
         if (this.timeLeft <= 0) {
@@ -68,19 +79,5 @@ function Bullet(x, y, angle) {
         ctx.closePath();
 
         ctx.drawImage(this.nemo, 0, 0, 64, 64, this.x - this.width/2, this.y - this.height/2, this.width, this.height);
-    }
-}
-
-function BulletHits(r1, r2) {
-    if(r1.x >= r2.x + r2.width){
-        return false;
-    } else if(r1.x <= r2.x){
-        return false;
-    } else if(r1.y >= r2.y + r2.height){
-        return false;
-    } else if(r1.y <= r2.y){
-        return false;
-    } else {
-        return true;
     }
 }

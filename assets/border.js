@@ -6,10 +6,6 @@ function Border(x, y, width, height, type) {
     this.type = type;
 
     this.floor = document.getElementById('floor');
-
-    this.update = function() {
-        this.draw();
-    }
     
     this.draw = function() {
         let ctx = myGameArea.context;

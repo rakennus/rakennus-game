@@ -80,7 +80,7 @@ function player(x, y, width, height) {
 
   this.movment = function() {if (this.active) {
     if (upKey && this.grounded == true) {
-      this.yspeed -= 15;
+      this.yspeed -= 11;
       this.jump ++;
       this.grounded = false;
     }
@@ -97,7 +97,7 @@ function player(x, y, width, height) {
       this.xspeed --;
     }
 
-    this.yspeed += 1;
+    this.yspeed += 0.7;
 
     if (this.xspeed > this.maxSpeed) {
       this.xspeed = this.maxSpeed;
@@ -144,31 +144,33 @@ function player(x, y, width, height) {
 		}
 
     for (let i = 0; i < borders.length; i++) {
-      let borderRect = {
-        x: borders[i].x,
-        y: borders[i].y,
-        width: borders[i].width,
-        height: borders[i].height
-      }
-
-      if (checkIntersection(horizontalRect, borderRect)) {
-        while (checkIntersection(horizontalRect, borderRect)) {
-          horizontalRect.x -= this.xspeedIndep;
+      if (borders[i].x > -cameraMovement1.x && borders[i].y > -cameraMovement1.y && borders[i].x < myGameArea.canvasWidth -cameraMovement1.x && borders[i].y < myGameArea.canvasHeight -cameraMovement1.y) {
+        let borderRect = {
+          x: borders[i].x,
+          y: borders[i].y,
+          width: borders[i].width,
+          height: borders[i].height
         }
-        this.x = horizontalRect.x;
-        this.xspeedIndep = 0;
-				this.xspeed = 0;
-      }
-      if (checkIntersection(verticalRect, borderRect)) {
-				if (groundCheck(verticalRect, borderRect)) {
-					this.grounded = true;
-				}
-        while (checkIntersection(verticalRect, borderRect)) {
-          verticalRect.y -= Math.sign(this.yspeedIndep);
+  
+        if (checkIntersection(horizontalRect, borderRect)) {
+          while (checkIntersection(horizontalRect, borderRect)) {
+            horizontalRect.x -= this.xspeedIndep;
+          }
+          this.x = horizontalRect.x;
+          this.xspeedIndep = 0;
+          this.xspeed = 0;
         }
-        this.y = verticalRect.y;
-        this.yspeedIndep = 0;
-				this.yspeed = 0;
+        if (checkIntersection(verticalRect, borderRect)) {
+          if (groundCheck(verticalRect, borderRect)) {
+            this.grounded = true;
+          }
+          while (checkIntersection(verticalRect, borderRect)) {
+            verticalRect.y -= Math.sign(this.yspeedIndep);
+          }
+          this.y = verticalRect.y;
+          this.yspeedIndep = 0;
+          this.yspeed = 0;
+        }
       }
     }
     this.y += this.yspeedIndep;

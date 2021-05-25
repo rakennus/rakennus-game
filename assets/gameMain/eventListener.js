@@ -31,9 +31,13 @@ function keyUpHandler(e) {
     }
 }
 
-window.addEventListener("mousemove", function myFunction(event) {
-    mouseXevent = event.offsetX;
-    mouseYevent = event.offsetY;
+window.addEventListener("mousemove", function myFunction(evt) {
+    var rect = myGameArea.canvas.getBoundingClientRect()
+    scaleX = myGameArea.canvas.width / rect.width
+    scaleY = myGameArea.canvas.height / rect.height
+
+    mouseXevent = (evt.clientX - rect.left) * scaleX
+    mouseYevent = (evt.clientY - rect.top) * scaleY
 });
 
 function mousePosition() {

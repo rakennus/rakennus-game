@@ -39,7 +39,10 @@ function startGame() {
             }
         }
     }
-    enemies.push(new enemie(100, 0));
+    //enemies.push(new enemie(100, -100));
+    //enemies.push(new enemie(200, -100));
+    //enemies.push(new enemie(300, -100));
+    //enemies.push(new enemie(400, -100));
 }
 
 var myGameArea = {
@@ -53,7 +56,7 @@ var myGameArea = {
     },
 }
 
-function updateGameArea(timestamp) {
+function updateGameArea() {
     let ctx = myGameArea.context;
     ctx.setTransform(1,0,0,1,0,0);
     mousePosition();
@@ -64,11 +67,10 @@ function updateGameArea(timestamp) {
 
 function update() {
     cameraMovement1.update();
-    for (let i = 0; i < borders.length; i++) {
-        borders[i].update();
-    }
     for (let i = 0; i < enemies.length; i++) {
-        enemies[i].update();
+        //if (enemies[i].x < cameraMovement1.x && enemies[i].x + enemies[i].width < cameraMovement1.x + myGameArea.canvas.width && enemies[i].y < cameraMovement1.x && enemies[i].y + enemies[i].height < cameraMovement1.y + myGameArea.canvas.height) {
+            enemies[i].update();
+        //}
     }
     for (let i = 0; i < bullets.length; i++) {
         bullets[i].update(i);

@@ -1,6 +1,6 @@
 function enemie(x, y, width, height) {
-  this.width = 30;
-  this.height = 56;
+  this.width = 64;
+  this.height = 64;
   this.x = x;
   this.y = y;
   this.playerSpriteOffset = 0;
@@ -61,7 +61,7 @@ function enemie(x, y, width, height) {
       ctx.save();
       ctx.translate(this.centerX, this.centerY);
       if (this.angle < 0) {ctx.scale(-1, 1);} else {ctx.scale(1, 1);}
-      ctx.drawImage(this.playerSprite, 12, 2, 36, 60, this.width/-2 +this.playerSpriteOffset, this.height/-2, this.width, this.height);
+      ctx.drawImage(this.playerSprite, 0, 0, 64, 64, this.width/-2 +this.playerSpriteOffset, this.height/-2 +3, this.width, this.height);
       ctx.restore();
 		}
 		this.drawWeapon = function() {

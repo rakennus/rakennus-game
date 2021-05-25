@@ -2,8 +2,10 @@ function cameraMovement() {
     this.x = 0;
     this.y = 0;
 
-    this.boxHeight = 120;
-    this.boxWidth = 100;
+    //this.boxHeight = 120;
+    //this.boxWidth = 100;
+    this.boxHeight = 0;
+    this.boxWidth = 0;
     this.boxOffsetX = 0;
     this.boxOffsetY = 0;
 

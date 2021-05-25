@@ -27,3 +27,36 @@ function inAir(r1) { let a = true;
         }
 	} return a;
 }
+
+function collision() {
+    for (let i = 0; i < borders.length; i++) {
+        if (borders[i].x > -cameraMovement1.x && borders[i].y > -cameraMovement1.y && borders[i].x < myGameArea.canvasWidth -cameraMovement1.x && borders[i].y < myGameArea.canvasHeight -cameraMovement1.y) {
+            let borderRect = {
+                x: borders[i].x,
+                y: borders[i].y,
+                width: borders[i].width,
+                height: borders[i].height
+            }
+
+            if (checkIntersection(horizontalRect, borderRect)) {
+                while (checkIntersection(horizontalRect, borderRect)) {
+                    horizontalRect.x -= this.xspeedIndep;
+                }
+                this.x = horizontalRect.x;
+                this.xspeedIndep = 0;
+                this.xspeed = 0;
+            }
+            if (checkIntersection(verticalRect, borderRect)) {
+                if (groundCheck(verticalRect, borderRect)) {
+                    this.grounded = true;
+                }
+                while (checkIntersection(verticalRect, borderRect)) {
+                    verticalRect.y -= Math.sign(this.yspeedIndep);
+                }
+                this.y = verticalRect.y;
+                this.yspeedIndep = 0;
+                this.yspeed = 0;
+            }
+        }
+    }
+}
