@@ -28,7 +28,9 @@ function inAir(r1) { let a = true;
 	} return a;
 }
 
-function collision() {
+function collision(horizontalRect, verticalRect, rect, ) {
+
+
     for (let i = 0; i < borders.length; i++) {
         if (borders[i].x > -cameraMovement1.x && borders[i].y > -cameraMovement1.y && borders[i].x < myGameArea.canvasWidth -cameraMovement1.x && borders[i].y < myGameArea.canvasHeight -cameraMovement1.y) {
             let borderRect = {
@@ -56,7 +58,7 @@ function collision() {
                 this.y = verticalRect.y;
                 this.yspeedIndep = 0;
                 this.yspeed = 0;
-            }
+            } 
         }
     }
 }
