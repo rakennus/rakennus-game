@@ -1,6 +1,6 @@
 function player(x, y, width, height) {
-  this.width = 30;
-  this.height = 56;
+  this.width = 45;
+  this.height = 72;
   this.x = x;
   this.y = y;
   this.playerSpriteOffset = 0;
@@ -18,7 +18,7 @@ function player(x, y, width, height) {
   this.yspeed = 0;
   this.xfriction = 0.9;
   this.yfriction = 0.9;
-  this.maxSpeed = 7;
+  this.maxSpeed = 6;
   this.maxFall = 20;
   this.active = true;
 
@@ -33,6 +33,11 @@ function player(x, y, width, height) {
 	this.aimOffsetY = -10;
 
   this.shootingCooldown = 0;
+
+  this.count = 0;
+  this.count2 = 0;
+  this.spriteX = 16;
+  this.spriteY = 6;
 
   this.update = function() {
     this.variableUpdate();
@@ -54,10 +59,27 @@ function player(x, y, width, height) {
       this.aimAngleOffset = 15;
       this.aimOffsetX = 10;
     }
+
+    if (this.xspeedIndep <= -4 || this.xspeedIndep >= 4) {
+      if (this.count <= 6) {
+        this.count ++
+      } else {
+        if (this.count2 <= 7  ) {
+          this.spriteX += 64
+          this.count2 ++
+        } else {
+          this.spriteX = 16
+          this.count2 = 0
+        }
+        this.count = 0
+      }
+    } else {
+      this.spriteX = 16
+    }
 	}
 		this.draw = function() {
 			this.drawPlayer();
-			this.drawWeapon();
+			//this.drawWeapon();
 		  //this.devStuff();
 		}
 		this.drawPlayer = function() {
@@ -65,7 +87,7 @@ function player(x, y, width, height) {
 		ctx.save();
 		ctx.translate(this.centerX, this.centerY);
 		if (this.angle < 0) {ctx.scale(1, 1);} else {ctx.scale(-1, 1);}
-		ctx.drawImage(this.playerSprite, 18, 4, 30, 56, this.width/-2 +this.playerSpriteOffset, this.height/-2, this.width, this.height);
+		ctx.drawImage(this.playerSprite, this.spriteX, this.spriteY, 30, 48, this.width/-2 +this.playerSpriteOffset, this.height/-2, this.width, this.height);
 		ctx.restore();
 		}
 		this.drawWeapon = function() {
@@ -80,7 +102,7 @@ function player(x, y, width, height) {
 
   this.movment = function() {if (this.active) {
     if (upKey && this.grounded == true) {
-      this.yspeed -= 15;
+      this.yspeed -= 11;
       this.jump ++;
       this.grounded = false;
     }
@@ -97,7 +119,7 @@ function player(x, y, width, height) {
       this.xspeed --;
     }
 
-    this.yspeed += 1;
+    this.yspeed += 0.7;
 
     if (this.xspeed > this.maxSpeed) {
       this.xspeed = this.maxSpeed;
@@ -144,31 +166,33 @@ function player(x, y, width, height) {
 		}
 
     for (let i = 0; i < borders.length; i++) {
-      let borderRect = {
-        x: borders[i].x,
-        y: borders[i].y,
-        width: borders[i].width,
-        height: borders[i].height
-      }
-
-      if (checkIntersection(horizontalRect, borderRect)) {
-        while (checkIntersection(horizontalRect, borderRect)) {
-          horizontalRect.x -= this.xspeedIndep;
+      if (borders[i].x > -cameraMovement1.x && borders[i].y > -cameraMovement1.y && borders[i].x < myGameArea.canvasWidth -cameraMovement1.x && borders[i].y < myGameArea.canvasHeight -cameraMovement1.y) {
+        let borderRect = {
+          x: borders[i].x,
+          y: borders[i].y,
+          width: borders[i].width,
+          height: borders[i].height
         }
-        this.x = horizontalRect.x;
-        this.xspeedIndep = 0;
-				this.xspeed = 0;
-      }
-      if (checkIntersection(verticalRect, borderRect)) {
-				if (groundCheck(verticalRect, borderRect)) {
-					this.grounded = true;
-				}
-        while (checkIntersection(verticalRect, borderRect)) {
-          verticalRect.y -= Math.sign(this.yspeedIndep);
+  
+        if (checkIntersection(horizontalRect, borderRect)) {
+          while (checkIntersection(horizontalRect, borderRect)) {
+            horizontalRect.x -= this.xspeedIndep;
+          }
+          this.x = horizontalRect.x;
+          this.xspeedIndep = 0;
+          this.xspeed = 0;
         }
-        this.y = verticalRect.y;
-        this.yspeedIndep = 0;
-				this.yspeed = 0;
+        if (checkIntersection(verticalRect, borderRect)) {
+          if (groundCheck(verticalRect, borderRect)) {
+            this.grounded = true;
+          }
+          while (checkIntersection(verticalRect, borderRect)) {
+            verticalRect.y -= Math.sign(this.yspeedIndep);
+          }
+          this.y = verticalRect.y;
+          this.yspeedIndep = 0;
+          this.yspeed = 0;
+        }
       }
     }
     this.y += this.yspeedIndep;

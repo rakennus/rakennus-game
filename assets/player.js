@@ -1,203 +1,215 @@
-function player(x, y, width, height) {
-  this.width = 30;
-  this.height = 56;
-  this.x = x;
-  this.y = y;
-  this.playerSpriteOffset = 0;
-
-  this.centerX = 0;
-  this.centerY = 0;
-
-	this.playerSprite = document.getElementById('playerSprite');
-	this.deagle = document.getElementById('deagle');
+let player = new function () {
+  this.position = {
+    x: 200,
+    y: -1000
+  };
+  this.size = {
+    width: 28,
+    height: 52
+  };
+  this.viewmodel = {
+    width: 48,
+    height: 54
+  }
+  this.velocity = {
+    x: 0,
+    y: 0
+  };
+  this.maxVelocity = {
+    x: 400,
+    y: 1400
+  };
+  this.roundedVelocity = {
+    x: 0,
+    y: 0
+  };
+  this.friction = {
+    x: 0.85,
+    y: 0.85
+  };
+  this.speed = {
+    x: 100,
+    y: 60
+  };
+  this.sprite = {
+    x: 0,
+    y: 0,
+    width: 64,
+    height: 64,
+    count: 0,
+    count2: 0,
+    speed: 4,
+    trashold: 200,
+  }
+  this.jumpHeight = 100;
 
   this.grounded = false;
-  this.xspeedIndep = 0;
-  this.yspeedIndep = 0;
-  this.xspeed = 0;
-  this.yspeed = 0;
-  this.xfriction = 0.9;
-  this.yfriction = 0.9;
-  this.maxSpeed = 7;
-  this.maxFall = 20;
-  this.active = true;
 
-	this.weaponWidth = 80;
-	this.weaponHeight = 64;
-	this.angle = 0;
+  this.playerSprite = document.getElementById('pinguin-sprite-sheet');
 
-	this.aimAngleOffset = 0;
-	this.aimX = 0;
-	this.aimY = 0;
-	this.aimOffsetX = 10;
-	this.aimOffsetY = -10;
-
-  this.shootingCooldown = 0;
-
-  this.update = function() {
+  this.update = function () {
     this.variableUpdate();
     this.movment();
-    this.shooting();
   }
-  this.variableUpdate = function() {
-    this.centerX = this.x + this.width/2;
-    this.centerY = this.y + this.height/2;
-		this.aimX = this.centerX + this.aimOffsetX + Math.cos((this.angle +90 +this.aimAngleOffset)* Math.PI / 180)*40;
-		this.aimY = this.centerY + this.aimOffsetY + Math.sin((this.angle +90 +this.aimAngleOffset)* Math.PI / 180)*40;
-
-    this.angle = -Math.atan2(mouseX - this.centerX, mouseY - this.centerY +25) / Math.PI * 180;
-		
-    if (this.angle < 0) {
-      this.aimAngleOffset = -15;
-      this.aimOffsetX = -10;
+  this.variableUpdate = function () {
+    if (this.velocity.x <= -this.sprite.trashold || this.velocity.x >= this.sprite.trashold) {
+      if (this.sprite.count <= this.sprite.speed) {
+        this.sprite.count++
+      } else {
+        if (this.sprite.count2 == 8) {
+          this.sprite.count2 = 0;
+        }
+        this.sprite.x = this.sprite.width * this.sprite.count2;
+        this.sprite.count2++
+        this.sprite.count = 0;
+      }
     } else {
-      this.aimAngleOffset = 15;
-      this.aimOffsetX = 10;
+      this.sprite.x = 0
     }
-	}
-		this.draw = function() {
-			this.drawPlayer();
-			this.drawWeapon();
-		  //this.devStuff();
-		}
-		this.drawPlayer = function() {
-		ctx = myGameArea.context;
-		ctx.save();
-		ctx.translate(this.centerX, this.centerY);
-		if (this.angle < 0) {ctx.scale(1, 1);} else {ctx.scale(-1, 1);}
-		ctx.drawImage(this.playerSprite, 18, 4, 30, 56, this.width/-2 +this.playerSpriteOffset, this.height/-2, this.width, this.height);
-		ctx.restore();
-		}
-		this.drawWeapon = function() {
-		ctx = myGameArea.context;
-		ctx.save();
-		ctx.translate(this.centerX + this.aimOffsetX, this.centerY + this.aimOffsetY);
-		ctx.rotate((this.angle -90) * Math.PI / 180);
-		if (this.angle < 0) {ctx.scale(1, -1);} else {ctx.scale(1, 1);}
-		ctx.drawImage(this.deagle, -this.weaponWidth +2, this.weaponHeight/-2 -2, this.weaponWidth, this.weaponHeight);
-		ctx.restore();
-		}
+    if (this.velocity.x < 0) {
+      this.sprite.y = 64
+    }
+    if (this.velocity.x > 0) {
+      this.sprite.y = 0
+    }
+  }
 
-  this.movment = function() {if (this.active) {
-    if (upKey && this.grounded == true) {
-      this.yspeed -= 11;
-      this.jump ++;
+  this.movment = function () {
+    if (controls.up && this.grounded) {
+      this.velocity.y = -Math.sqrt(this.jumpHeight * 2 * this.speed.y);
+      this.grounded = false;
+    } else if (controls.down) {
+      this.velocity.y += this.speed.y * 2;
+    }
+
+    if (!controls.left && !controls.right || controls.left && controls.right) {
+      this.velocity.x *= this.friction.x;
+    } else if (controls.left) {
+      this.velocity.x -= this.speed.x;
+    } else if (controls.right) {
+      this.velocity.x += this.speed.x;
+    }
+
+    this.velocity.y += this.speed.y;
+
+    if (this.velocity.x > this.maxVelocity.x) {
+      this.velocity.x = this.maxVelocity.x;
+    } else if (this.velocity.x < -this.maxVelocity.x) {
+      this.velocity.x = -this.maxVelocity.x;
+    }
+
+    if (this.velocity.y > this.maxVelocity.y) {
+      this.velocity.y = this.maxVelocity.y;
+    }
+
+    this.roundedVelocity.x = Math.trunc(this.velocity.x * secondsPassed);
+    this.roundedVelocity.y = Math.trunc(this.velocity.y * secondsPassed);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    let horizontalRect = {
+      x: this.position.x + this.roundedVelocity.x,
+      y: this.position.y,
+      width: this.size.width,
+      height: this.size.height
+    }
+    let verticalRect = {
+      x: this.position.x,
+      y: this.position.y + this.roundedVelocity.y,
+      width: this.size.width,
+      height: this.size.height
+    }
+    let rect = {
+      x: this.position.x,
+      y: this.position.y,
+      width: this.size.width,
+      height: this.size.height
+    }
+
+    if (inAir(rect)) {
       this.grounded = false;
     }
 
-    if (downKey && this.grounded == false) {
-      this.yspeed += 5;
-    }
-
-    if (!leftKey && !rightKey || leftKey && rightKey) {
-      this.xspeed *= this.xfriction;
-    } else if (rightKey) {
-      this.xspeed ++;
-    } else if (leftKey) {
-      this.xspeed --;
-    }
-
-    this.yspeed += 0.7;
-
-    if (this.xspeed > this.maxSpeed) {
-      this.xspeed = this.maxSpeed;
-    } else if (this.xspeed < -this.maxSpeed) {
-      this.xspeed = -this.maxSpeed;
-    }
-
-    if (this.yspeed > this.maxFall) {this.yspeed = this.maxFall;}
-
-    if(this.jump_cooldown > 0){this.jump_cooldown --;}
-
-    if (this.xspeed > 0) {
-      this.xspeedIndep = Math.floor(this.xspeed);
-    } else {
-      this.xspeedIndep = Math.ceil(this.xspeed);
-    }
-    if (this.yspeed > 0) {
-      this.yspeedIndep = Math.floor(this.yspeed);
-    } else {
-      this.yspeedIndep = Math.ceil(this.yspeed);
-    }
-
-    let horizontalRect = {
-      x: this.x + this.xspeedIndep,
-      y: this.y,
-      width: this.width,
-      height: this.height
-    }
-    let verticalRect = {
-      x: this.x,
-      y: this.y + this.yspeedIndep,
-      width: this.width,
-      height: this.height
-    }
-		let rect = {
-      x: this.x,
-      y: this.y,
-      width: this.width,
-      height: this.height
-    }
-
-		if (inAir(rect)) {
-			this.grounded = false;
-		}
-
     for (let i = 0; i < borders.length; i++) {
-      if (borders[i].x > -cameraMovement1.x && borders[i].y > -cameraMovement1.y && borders[i].x < myGameArea.canvasWidth -cameraMovement1.x && borders[i].y < myGameArea.canvasHeight -cameraMovement1.y) {
+      if (
+        borders[i].x > -cameraMovement.x &&
+        borders[i].y > -cameraMovement.y &&
+        borders[i].x < canvas.width - cameraMovement.x &&
+        borders[i].y < canvas.height - cameraMovement.y
+      ) {
         let borderRect = {
           x: borders[i].x,
           y: borders[i].y,
           width: borders[i].width,
           height: borders[i].height
         }
-  
+
         if (checkIntersection(horizontalRect, borderRect)) {
           while (checkIntersection(horizontalRect, borderRect)) {
-            horizontalRect.x -= this.xspeedIndep;
+            horizontalRect.x -= Math.sign(this.roundedVelocity.x);
           }
-          this.x = horizontalRect.x;
-          this.xspeedIndep = 0;
-          this.xspeed = 0;
+          this.position.x = horizontalRect.x;
+          this.roundedVelocity.x = 0;
+          this.velocity.x = 0;
         }
         if (checkIntersection(verticalRect, borderRect)) {
           if (groundCheck(verticalRect, borderRect)) {
             this.grounded = true;
           }
           while (checkIntersection(verticalRect, borderRect)) {
-            verticalRect.y -= Math.sign(this.yspeedIndep);
+            verticalRect.y -= Math.sign(this.roundedVelocity.y);
           }
-          this.y = verticalRect.y;
-          this.yspeedIndep = 0;
-          this.yspeed = 0;
+          this.position.y = verticalRect.y;
+          this.roundedVelocity.y = 0;
+          this.velocity.y = 0;
         }
       }
     }
-    this.y += this.yspeedIndep;
-    this.x += this.xspeedIndep;
-  }}
-  this.shooting = function(){
-    if (leftClick == true && this.shootingCooldown <= 0) {
-      bullets.push(new Bullet(player1.aimX, player1.aimY, player1.angle));
-      this.xspeed -= Math.sin(Math.atan2(mouseX - player1.aimX, mouseY - player1.aimY))*2;
-      this.yspeed -= Math.cos(Math.atan2(mouseX - player1.aimX, mouseY - player1.aimY))*5;
-      ctx = myGameArea.context;
-      this.shootingCooldown = 16;
-    }
-    else {
-      this.shootingCooldown --;
-    }
-  }
 
-  this.devStuff = function() {
-    ctx.beginPath();
-		ctx.globalAlpha = 0.2;
-    ctx.fillStyle = "red";
-    ctx.fillRect(this.x, this.y, this.width, this.height);
-		ctx.globalAlpha = 1;
-    ctx.beginPath();
-    ctx.moveTo(this.aimX	, this.aimY);
-    ctx.lineTo(mouseX, mouseY);
-    ctx.stroke();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    this.position.x += this.roundedVelocity.x;
+    this.position.y += this.roundedVelocity.y;
+  }
+  this.draw = function () {
+    ctx.drawImage(
+      this.playerSprite,
+      this.sprite.x + 10,
+      this.sprite.y + 2,
+      48,
+      54,
+      this.position.x - (this.viewmodel.width - this.size.width) / 2,
+      this.position.y - (this.viewmodel.height - this.size.height) / 2,
+      this.viewmodel.width,
+      this.viewmodel.height
+    );
   }
 }

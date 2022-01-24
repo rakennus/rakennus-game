@@ -1,6 +1,6 @@
 function enemie(x, y, width, height) {
-  this.width = 30;
-  this.height = 56;
+  this.width = 64;
+  this.height = 64;
   this.x = x;
   this.y = y;
   this.playerSpriteOffset = 0;
@@ -8,8 +8,8 @@ function enemie(x, y, width, height) {
   this.centerX = 0;
   this.centerY = 0;
 
-	this.playerSprite = document.getElementById('playerSprite');
-	this.deagle = document.getElementById('deagle');
+	this.playerSprite = document.getElementById('jesus');
+	this.lemon = document.getElementById('lemon');
 
   this.grounded = false;
   this.xspeedIndep = 0;
@@ -22,15 +22,13 @@ function enemie(x, y, width, height) {
   this.maxFall = 20;
   this.active = true;
 
-	this.weaponWidth = 80;
-	this.weaponHeight = 64;
+	this.weaponWidth = 20;
+	this.weaponHeight = 20;
 	this.angle = 0;
 
 	this.aimAngleOffset = 0;
 	this.aimX = 0;
 	this.aimY = 0;
-	this.aimOffsetX = 10;
-	this.aimOffsetY = -10;
 
   this.shootingCooldown = 0;
 
@@ -42,10 +40,10 @@ function enemie(x, y, width, height) {
   this.variableUpdate = function() {
     this.centerX = this.x + this.width/2;
     this.centerY = this.y + this.height/2;
-	  this.aimX = this.centerX + this.aimOffsetX + Math.cos((this.angle +90 +this.aimAngleOffset)* Math.PI / 180)*40;
-	  this.aimY = this.centerY + this.aimOffsetY + Math.sin((this.angle +90 +this.aimAngleOffset)* Math.PI / 180)*40;
+	  this.aimX = this.centerX + Math.cos((this.angle +90)* Math.PI / 180)*10;
+	  this.aimY = this.centerY + Math.sin((this.angle +90)* Math.PI / 180)*10;
 
-    this.angle = -Math.atan2(player1.x - this.centerX, player1.y - this.centerY +25) / Math.PI * 180;
+    this.angle = (-Math.atan2(player1.x - this.centerX, player1.y - this.centerY +25) / Math.PI * 180) -20;
 		
     if (this.angle < 0) {
       this.aimAngleOffset = -15;
@@ -60,21 +58,19 @@ function enemie(x, y, width, height) {
 			this.drawWeapon();
 		}
 		this.drawPlayer = function() {
-		ctx = myGameArea.context;
-		ctx.save();
-		ctx.translate(this.centerX, this.centerY);
-		if (this.angle < 0) {ctx.scale(1, 1);} else {ctx.scale(-1, 1);}
-		ctx.drawImage(this.playerSprite, 18, 4, 30, 56, this.width/-2 +this.playerSpriteOffset, this.height/-2, this.width, this.height);
-		ctx.restore();
+      ctx.save();
+      ctx.translate(this.centerX, this.centerY);
+      if (this.angle < 0) {ctx.scale(-1, 1);} else {ctx.scale(1, 1);}
+      ctx.drawImage(this.playerSprite, 0, 0, 64, 64, this.width/-2 +this.playerSpriteOffset, this.height/-2 +3, this.width, this.height);
+      ctx.restore();
 		}
 		this.drawWeapon = function() {
-		ctx = myGameArea.context;
-		ctx.save();
-		ctx.translate(this.centerX + this.aimOffsetX, this.centerY + this.aimOffsetY);
-		ctx.rotate((this.angle -90) * Math.PI / 180);
-		if (this.angle < 0) {ctx.scale(1, -1);} else {ctx.scale(1, 1);}
-		ctx.drawImage(this.deagle, -this.weaponWidth +2, this.weaponHeight/-2 -2, this.weaponWidth, this.weaponHeight);
-		ctx.restore();
+      ctx.save();
+      ctx.translate(this.centerX, this.centerY);
+      ctx.rotate((this.angle -90) * Math.PI / 180);
+      if (this.angle < 0) {ctx.scale(1, -1);} else {ctx.scale(1, 1);}
+      ctx.drawImage(this.lemon, this.weaponWidth/-2 -20, this.weaponHeight/-2, this.weaponWidth, this.weaponHeight);
+      ctx.restore();
 		}
 
   this.movment = function() {if (this.active) {
@@ -177,9 +173,9 @@ function enemie(x, y, width, height) {
 
   this.shooting = function(){
     if (this.shootingCooldown <= 0) {
-      bullets.push(new Bullet(this.aimX, this.aimY, this.angle));
+      bullets.push(new Grenade(this.aimX, this.aimY, this.angle));
       ctx = myGameArea.context;
-      this.shootingCooldown = 30;
+      this.shootingCooldown = 120;
     }
     else {
       this.shootingCooldown --;

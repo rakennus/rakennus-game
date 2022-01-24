@@ -1,35 +1,27 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-	<link rel="stylesheet" href="assets/css/style.css">
-	<title>game</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>game</title>
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
+
 <body>
-<body onload="startGame()">
+    <canvas id="canvas" width="1000" height="600"></canvas>
 
-<canvas id="game" width="600" height="300"></canvas>
-
-<div style="display: none;">
-	<img id="playerSprite" src="assets/sprites/pinguin.png">
-	<img id="deagle" src="assets/sprites/DesertEagle.png">
-	<img id="nemo" src="assets/sprites/nemo.png">
-	<img id="floor" src="assets/sprites/floor.png">
-	<img id="background" src="assets/sprites/background.png">
-	<img id="jesus" src="assets/sprites/enemy.png">
-	<img id="lemon" src="assets/sprites/lemon.png">
-</div>
-
+    <div style="display: none;">
+        <img id="pinguin-sprite-sheet" src="assets/sprites/pinguin-sprite-sheet.png">
+        <img id="floor" src="assets/sprites/floor.png">
+    </div>
 </body>
-<script src="assets/gameMain/script.js"></script>
-<script src="assets/gameMain/eventListener.js"></script>
+
+<script src="assets/script.js"></script>
+<script src="assets/eventListener.js"></script>
 <script src="assets/player.js"></script>
 <script src="assets/border.js"></script>
-<script src="assets/camera.js"></script>
-<script src="assets/gameMain/map.js"></script>
-<script src="assets/enemie.js"></script>
-<script src="assets/grenade.js"></script>
-<script src="assets/gameMain/functions.js"></script>
-<script src="assets/bullet.js"></script>
+<script src="assets/map.js"></script>
+<script src="assets/functions.js"></script>
+
 </html>
