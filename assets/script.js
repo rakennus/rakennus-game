@@ -6,6 +6,9 @@ let secondsPassed = 0;
 let oldTimeStamp = 0;
 let fps = 0;
 
+let fixedUpdateTime = 0;
+let fixedUpdateCount = 0;
+
 let controls = {
     left: false,
     right: false,
@@ -29,7 +32,7 @@ function startGame() {
 }
 
 var myGameArea = {
-    load: function() {
+    load: function () {
         for (var y = 0; y < mapH; y++) {
             for (var x = 0; x < mapW; x++) {
                 if (gameMap[((y * mapW) + x)] == 1) {
@@ -64,6 +67,13 @@ function gameLoop(timeStamp) {
 function update() {
     cameraMovement.update();
     player.update();
+
+    fixedUpdateTime += secondsPassed;
+    if (fixedUpdateTime >= fixedUpdateCount) { fixedUpdate(); fixedUpdateCount += 0.01 };
+}
+
+function fixedUpdate() {
+    axis.update();
 }
 
 function draw() {
@@ -79,12 +89,12 @@ function draw() {
     player.draw();
 
     // draw fps
-    ctx.font = '25px Arial';
-    ctx.fillStyle = 'limegreen';
-    ctx.fillText("FPS: " + fps, -cameraMovement.x, -cameraMovement.y + 25);
+    ctx.font = '12px Arial';
+    ctx.fillStyle = 'black';
+    ctx.fillText("FPS: " + fps, -cameraMovement.x + 4, -cameraMovement.y + 14);
 }
 
-let cameraMovement = new function() {
+let cameraMovement = new function () {
     this.x = 0;
     this.y = 0;
 
@@ -93,7 +103,7 @@ let cameraMovement = new function() {
     this.boxOffsetX = 0;
     this.boxOffsetY = 0;
 
-    this.update = function() {
+    this.update = function () {
         if (player.position.x + player.size.width > canvas.width / 2 - this.boxWidth / 2 + this.boxOffsetX + this.boxWidth) {
             this.boxOffsetX += (player.position.x + player.size.width) - (canvas.width / 2 - this.boxWidth / 2 + this.boxOffsetX + this.boxWidth);
         }
@@ -125,5 +135,35 @@ function checkIntersection(r1, r2) {
         return false;
     } else {
         return true;
+    }
+}
+
+let axis = {
+    horizontal: 0,
+    vertical: 0,
+
+    update: function () {
+        if (!controls.left && !controls.right || controls.left && controls.right) {
+            this.horizontal *= 0.95;
+        } else if (controls.right) {
+            this.horizontal += 0.1;
+        } else if (controls.left) {
+            this.horizontal -= 0.1;
+        }
+
+        if (this.horizontal >= 1) {
+            this.horizontal = 1;
+        }
+        if (this.horizontal <= -1) {
+            this.horizontal = -1;
+        }
+
+        if (!controls.down && !controls.up || controls.down && controls.up) {
+            this.vertical = 0;
+        } else if (controls.down) {
+            this.vertical = -1;
+        } else if (controls.up) {
+            this.vertical = 1;
+        }
     }
 }

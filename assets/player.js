@@ -13,24 +13,20 @@ let player = new function () {
   }
   this.velocity = {
     x: 0,
-    y: 0
-  };
-  this.maxVelocity = {
-    x: 400,
-    y: 1400
+    y: 0,
   };
   this.roundedVelocity = {
     x: 0,
-    y: 0
+    y: 0,
   };
-  this.friction = {
-    x: 0.85,
-    y: 0.85
-  };
-  this.speed = {
-    x: 100,
-    y: 60
-  };
+  this.friction = 0.85;
+  this.speed = 10 * 64;
+  this.gravity = 30 * 64;
+  this.jumpForce = 1.4 * 64;
+  this.grounded = false;
+  this.movementDirectionY;
+  this.maxFall = 100 * 64;
+
   this.sprite = {
     x: 0,
     y: 0,
@@ -38,13 +34,9 @@ let player = new function () {
     height: 64,
     count: 0,
     count2: 0,
-    speed: 4,
-    trashold: 200,
+    speed: 0.07,
+    trashold: 4.5 * 64,
   }
-  this.jumpHeight = 100;
-
-  this.grounded = false;
-
   this.playerSprite = document.getElementById('pinguin-sprite-sheet');
 
   this.update = function () {
@@ -53,7 +45,7 @@ let player = new function () {
   }
   this.variableUpdate = function () {
     if (this.velocity.x <= -this.sprite.trashold || this.velocity.x >= this.sprite.trashold) {
-      if (this.sprite.count <= this.sprite.speed) {
+      if (this.sprite.count <= this.sprite.speed / secondsPassed) {
         this.sprite.count++
       } else {
         if (this.sprite.count2 == 8) {
@@ -75,49 +67,31 @@ let player = new function () {
   }
 
   this.movment = function () {
+    this.velocity.x = this.speed * axis.horizontal;
+
+    this.movementDirectionY = this.velocity.y;
+
     if (controls.up && this.grounded) {
-      this.velocity.y = -Math.sqrt(this.jumpHeight * 2 * this.speed.y);
+      this.velocity.y = -Math.sqrt(this.jumpForce * 2 * this.gravity);
       this.grounded = false;
-    } else if (controls.down) {
-      this.velocity.y += this.speed.y * 2;
+    } else {
+      this.velocity.y = this.movementDirectionY;
     }
 
-    if (!controls.left && !controls.right || controls.left && controls.right) {
-      this.velocity.x *= this.friction.x;
-    } else if (controls.left) {
-      this.velocity.x -= this.speed.x;
-    } else if (controls.right) {
-      this.velocity.x += this.speed.x;
+    if (controls.down && !this.grounded) {
+      this.velocity.y += this.gravity * 2 * secondsPassed;
     }
 
-    this.velocity.y += this.speed.y;
-
-    if (this.velocity.x > this.maxVelocity.x) {
-      this.velocity.x = this.maxVelocity.x;
-    } else if (this.velocity.x < -this.maxVelocity.x) {
-      this.velocity.x = -this.maxVelocity.x;
+    if (!this.grounded) {
+      this.velocity.y += this.gravity * secondsPassed;
     }
 
-    if (this.velocity.y > this.maxVelocity.y) {
-      this.velocity.y = this.maxVelocity.y;
+    if (this.velocity.y > this.maxFall) {
+      this.velocity.y = this.maxFall;
     }
 
     this.roundedVelocity.x = Math.trunc(this.velocity.x * secondsPassed);
     this.roundedVelocity.y = Math.trunc(this.velocity.y * secondsPassed);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     let horizontalRect = {
       x: this.position.x + this.roundedVelocity.x,
@@ -177,24 +151,6 @@ let player = new function () {
         }
       }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     this.position.x += this.roundedVelocity.x;
     this.position.y += this.roundedVelocity.y;
