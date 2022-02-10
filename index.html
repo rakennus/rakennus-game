@@ -5,15 +5,42 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>game</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        body {
+            background-color: #202020;
+            overflow: hidden;
+        }
+
+        #canvas {
+            border: 1px solid #202020;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: #0000008f 0 0 10px 10px;
+            background-color: white;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -webkit-crisp-edges;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+        .assets {
+            display: none;
+        }
+    </style>
 </head>
 
 <body>
-    <canvas id="canvas" width="1000" height="600"></canvas>
+    <canvas id="canvas"></canvas>
 
-    <div style="display: none;">
-        <img id="pinguin-sprite-sheet" src="assets/sprites/pinguin-sprite-sheet.png">
+    <div class="assets">
+        <img id="pinguin-sprite-sheet" src="assets/sprites/penguin/penguin-sprite-sheet.png">
         <img id="floor" src="assets/sprites/floor.png">
+        <img id="background" src="assets/sprites/">
+        <img id="dirt" src="assets/sprites/dirt.png">
+
+        <canvas id="map-canvas"></canvas>
+        <img id="map" src="assets/sprites/map.png">
     </div>
 </body>
 
@@ -21,7 +48,6 @@
 <script src="assets/eventListener.js"></script>
 <script src="assets/player.js"></script>
 <script src="assets/border.js"></script>
-<script src="assets/map.js"></script>
 <script src="assets/functions.js"></script>
 
 </html>

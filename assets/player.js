@@ -1,28 +1,14 @@
 let player = new function () {
-  this.position = {
-    x: 200,
-    y: -1000
-  };
-  this.size = {
-    width: 28,
-    height: 52
-  };
-  this.viewmodel = {
-    width: 48,
-    height: 54
-  }
-  this.velocity = {
-    x: 0,
-    y: 0,
-  };
-  this.roundedVelocity = {
-    x: 0,
-    y: 0,
-  };
+  this.position = { x: 400, y: -400 };
+  this.size = { width: 20, height: 46 };
+  this.viewmodel = { width: 64, height: 64 };
+  this.velocity = { x: 0, y: 0 };
+  this.roundedVelocity = {x: 0,y: 0};
+  
   this.friction = 0.85;
   this.speed = 10 * 64;
-  this.gravity = 30 * 64;
-  this.jumpForce = 1.4 * 64;
+  this.gravity = 40 * 64;
+  this.jumpHeight = 1.2 * 64;
   this.grounded = false;
   this.movementDirectionY;
   this.maxFall = 100 * 64;
@@ -30,36 +16,37 @@ let player = new function () {
   this.sprite = {
     x: 0,
     y: 0,
-    width: 64,
-    height: 64,
-    count: 0,
-    count2: 0,
+    width: 32,
+    height: 32,
+    time: 0,
+    index: 0,
     speed: 0.07,
-    trashold: 4.5 * 64,
+    triggerTrashold: 4.5 * 64,
+    image: document.getElementById('pinguin-sprite-sheet'),
   }
-  this.playerSprite = document.getElementById('pinguin-sprite-sheet');
 
   this.update = function () {
     this.variableUpdate();
     this.movment();
   }
+  
   this.variableUpdate = function () {
-    if (this.velocity.x <= -this.sprite.trashold || this.velocity.x >= this.sprite.trashold) {
-      if (this.sprite.count <= this.sprite.speed / secondsPassed) {
-        this.sprite.count++
+    if (this.velocity.x <= -this.sprite.triggerTrashold || this.velocity.x >= this.sprite.triggerTrashold) {
+      if (this.sprite.time <= this.sprite.speed / secondsPassed) {
+        this.sprite.time++
       } else {
-        if (this.sprite.count2 == 8) {
-          this.sprite.count2 = 0;
+        if (this.sprite.index == 8) {
+          this.sprite.index = 0;
         }
-        this.sprite.x = this.sprite.width * this.sprite.count2;
-        this.sprite.count2++
-        this.sprite.count = 0;
+        this.sprite.x = this.sprite.width * this.sprite.index;
+        this.sprite.index++
+        this.sprite.time = 0;
       }
     } else {
       this.sprite.x = 0
     }
     if (this.velocity.x < 0) {
-      this.sprite.y = 64
+      this.sprite.y = this.sprite.height;
     }
     if (this.velocity.x > 0) {
       this.sprite.y = 0
@@ -72,7 +59,7 @@ let player = new function () {
     this.movementDirectionY = this.velocity.y;
 
     if (controls.up && this.grounded) {
-      this.velocity.y = -Math.sqrt(this.jumpForce * 2 * this.gravity);
+      this.velocity.y = -Math.sqrt(this.jumpHeight * 2 * this.gravity);
       this.grounded = false;
     } else {
       this.velocity.y = this.movementDirectionY;
@@ -157,11 +144,11 @@ let player = new function () {
   }
   this.draw = function () {
     ctx.drawImage(
-      this.playerSprite,
-      this.sprite.x + 10,
-      this.sprite.y + 2,
-      48,
-      54,
+      this.sprite.image,
+      this.sprite.x,
+      this.sprite.y,
+      this.sprite.width,
+      this.sprite.width,
       this.position.x - (this.viewmodel.width - this.size.width) / 2,
       this.position.y - (this.viewmodel.height - this.size.height) / 2,
       this.viewmodel.width,

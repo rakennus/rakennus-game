@@ -1,35 +1,53 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-	<link rel="stylesheet" href="assets/css/style.css">
-	<title>game</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>game</title>
+    <style>
+        body {
+            background-color: #202020;
+            overflow: hidden;
+        }
+
+        #canvas {
+            border: 1px solid #202020;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: #0000008f 0 0 10px 10px;
+            background-color: white;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -webkit-crisp-edges;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+        .assets {
+            display: none;
+        }
+    </style>
 </head>
+
 <body>
-<body onload="startGame()">
+    <canvas id="canvas"></canvas>
 
-<canvas id="game" width="400" height="300"></canvas>
+    <div class="assets">
+        <img id="pinguin-sprite-sheet" src="assets/sprites/penguin/penguin-sprite-sheet.png">
+        <img id="floor" src="assets/sprites/floor.png">
+        <img id="background" src="assets/sprites/">
+        <img id="dirt" src="assets/sprites/dirt.png">
 
-<div style="display: none;">
-	<img id="playerSprite" src="assets/sprites/pinguin.png">
-	<img id="deagle" src="assets/sprites/DesertEagle.png">
-	<img id="nemo" src="assets/sprites/nemo.png">
-	<img id="floor" src="assets/sprites/floor.png">
-	<img id="background" src="assets/sprites/background.png">
-	<img id="jesus" src="assets/sprites/enemy.png">
-	<img id="lemon" src="assets/sprites/lemon.png">
-</div>
-
+        <canvas id="map-canvas"></canvas>
+        <img id="map" src="assets/sprites/map.png">
+    </div>
 </body>
-<script src="assets/gameMain/script.js"></script>
-<script src="assets/gameMain/eventListener.js"></script>
+
+<script src="assets/script.js"></script>
+<script src="assets/eventListener.js"></script>
 <script src="assets/player.js"></script>
 <script src="assets/border.js"></script>
-<script src="assets/camera.js"></script>
-<script src="assets/gameMain/map.js"></script>
-<script src="assets/enemie.js"></script>
-<script src="assets/grenade.js"></script>
-<script src="assets/gameMain/functions.js"></script>
-<script src="assets/bullet.js"></script>
+<script src="assets/functions.js"></script>
+
 </html>

@@ -1,20 +1,18 @@
-function Border(x, y, width, height, type) {
+function Border(x, y, width, height, material) {
     this.width = width;
     this.height = height;
     this.x = x;
     this.y = y;
-    this.type = type;
+    this.material = material;
 
+    this.dirt = document.getElementById('dirt');
     this.floor = document.getElementById('floor');
-    
-    this.draw = function() {
-        let ctx = myGameArea.context;
-        if (this.type == "spawn") {
-            ctx.fillStyle = "blue";            
-            ctx.fillRect(this.x, this.y, this.width, this.height);
-        }
-        if (this.type == "floor") {
-            ctx.drawImage(this.floor, 0, 0, 16, 16, this.x, this.y, this.width, this.height);            
+
+    this.draw = function () {
+        if (this.material == "dirt") {
+            ctx.drawImage(this.dirt, 0, 0, 8, 8, this.x, this.y, this.width, this.height);
+        } else {
+            ctx.drawImage(this.floor, 0, 0, 8, 8, this.x, this.y, this.width, this.height);
         }
     }
 }
