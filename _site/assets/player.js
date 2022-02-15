@@ -3,10 +3,10 @@ let player = new function () {
   this.size = { width: 20, height: 46 };
   this.viewmodel = { width: 64, height: 64 };
   this.velocity = { x: 0, y: 0 };
-  this.roundedVelocity = {x: 0,y: 0};
-  
+  this.roundedVelocity = { x: 0, y: 0 };
+
   this.friction = 0.85;
-  this.speed = 10 * 64;
+  this.speed = 8 * 64;
   this.gravity = 40 * 64;
   this.jumpHeight = 1.2 * 64;
   this.grounded = false;
@@ -20,8 +20,8 @@ let player = new function () {
     height: 32,
     time: 0,
     index: 0,
-    speed: 0.07,
-    triggerTrashold: 4.5 * 64,
+    speed: 0.08,
+    triggerTrashold: 2.5 * 64,
     image: document.getElementById('pinguin-sprite-sheet'),
   }
 
@@ -29,7 +29,7 @@ let player = new function () {
     this.variableUpdate();
     this.movment();
   }
-  
+
   this.variableUpdate = function () {
     if (this.velocity.x <= -this.sprite.triggerTrashold || this.velocity.x >= this.sprite.triggerTrashold) {
       if (this.sprite.time <= this.sprite.speed / secondsPassed) {
@@ -54,15 +54,28 @@ let player = new function () {
   }
 
   this.movment = function () {
-    this.velocity.x = this.speed * axis.horizontal;
+    if (controls.touchControls) {
+      this.velocity.x = this.speed * joyStick.stickX / (joyStick.size / 2);
+    } else {
+      this.velocity.x = this.speed * axis.horizontal;
+    }
 
     this.movementDirectionY = this.velocity.y;
 
-    if (controls.up && this.grounded) {
-      this.velocity.y = -Math.sqrt(this.jumpHeight * 2 * this.gravity);
-      this.grounded = false;
+    if (controls.touchControls) {
+      if (joyStick.stickY < -(joyStick.size / 2) + 10 && this.grounded) {
+        this.velocity.y = -Math.sqrt(this.jumpHeight * 2 * this.gravity);
+        this.grounded = false;
+      } else {
+        this.velocity.y = this.movementDirectionY;
+      }
     } else {
-      this.velocity.y = this.movementDirectionY;
+      if (controls.up && this.grounded) {
+        this.velocity.y = -Math.sqrt(this.jumpHeight * 2 * this.gravity);
+        this.grounded = false;
+      } else {
+        this.velocity.y = this.movementDirectionY;
+      }
     }
 
     if (controls.down && !this.grounded) {

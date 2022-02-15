@@ -2,6 +2,8 @@ document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
 function keyDownHandler(e) {
+    controls.touchControls = false;
+
     if(e.key == "Right" || e.key == "ArrowRight" || e.key == "d" || e.key == "D") {
         controls.right = true;
     }

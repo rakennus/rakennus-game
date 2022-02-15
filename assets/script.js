@@ -13,7 +13,11 @@ let controls = {
     left: false,
     right: false,
     up: false,
-    down: false
+    down: false,
+    touchControls: false,
+    touchStarted: false,
+    end: { x: 0, y: 0 },
+    start: { x: 0, y: 0 },
 }
 
 let borders = [];
@@ -34,6 +38,10 @@ window.onload = (event) => {
 
     canvas.width = document.documentElement.clientWidth - 100;
     canvas.height = document.documentElement.clientHeight - 100;
+
+    canvas.addEventListener("touchstart", TouchHandleStart, false);
+    canvas.addEventListener("touchmove", TouchHandleMove, false);
+    canvas.addEventListener("touchend", TouchHandleEnd, false);
 
     // loads game area
     myGameArea.load();
@@ -85,6 +93,7 @@ function gameLoop(timeStamp) {
 function update() {
     cameraMovement.update();
     player.update();
+    joyStick.update();
 
     fixedUpdateTime += secondsPassed;
     if (fixedUpdateTime >= fixedUpdateCount) { fixedUpdate(); fixedUpdateCount += 0.01 };
@@ -108,10 +117,15 @@ function draw() {
     // draw player
     player.draw();
 
+    if (controls.touchControls) {
+        joyStick.draw();
+    }
+
     // draw fps
     ctx.font = '12px Arial';
     ctx.fillStyle = 'black';
     ctx.fillText("FPS: " + fps, -cameraMovement.x + 4, -cameraMovement.y + 14);
+    ctx.fillText((controls.start.x - controls.end.x) + ' | ' + (controls.start.y - controls.end.y), -cameraMovement.x + 60, -cameraMovement.y + 14);
 }
 
 let cameraMovement = new function () {
@@ -187,3 +201,73 @@ let axis = {
         }
     }
 }
+
+let joyStick = {
+    stickX: 0,
+    stickY: 0,
+    x: 0,
+    y: 0,
+    size: 120,
+    margin: 80,
+    padding: 20,
+
+    update: function () {
+        this.stickX = -(controls.start.x - controls.end.x);
+        this.stickY = -(controls.start.y - controls.end.y);
+
+        if (this.stickX > this.size / 2) {
+            this.stickX = this.size / 2;
+        } else if (this.stickX < -this.size / 2) {
+            this.stickX = -this.size / 2;
+        }
+
+        if (this.stickY > this.size / 2) {
+            this.stickY = this.size / 2;
+        } else if (this.stickY < -this.size / 2) {
+            this.stickY = -this.size / 2;
+        }
+    },
+    draw: function () {
+        this.x = -cameraMovement.x + this.size / 2 + this.margin;
+        this.y = -cameraMovement.y + canvas.height - this.size / 2 - this.margin;
+
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size / 2, 0, 2 * Math.PI);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(this.x + this.stickX, this.y + this.stickY, this.size / 2 - this.padding, 0, 2 * Math.PI);
+        ctx.fillStyle = "black";
+        ctx.fill();
+    }
+}
+
+function TouchHandleStart(event) {
+    event.preventDefault();
+    controls.touchControls = true;
+
+    controls.touchStarted = true;
+    controls.start.x = event.changedTouches[0].pageX;
+    controls.start.y = event.changedTouches[0].pageY;
+
+    controls.end.x = event.changedTouches[0].pageX;
+    controls.end.y = event.changedTouches[0].pageY;
+};
+
+function TouchHandleMove(event) {
+    event.preventDefault();
+
+    controls.end.x = event.changedTouches[0].pageX;
+    controls.end.y = event.changedTouches[0].pageY;
+};
+
+function TouchHandleEnd(event) {
+    event.preventDefault();
+
+    controls.start.x = 0;
+    controls.start.y = 0;
+
+    controls.end.x = 0;
+    controls.end.y = 0;
+
+    controls.touchStarted = false;
+};
