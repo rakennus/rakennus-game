@@ -1,17 +1,21 @@
 let player = new function () {
-  this.position = { x: 400, y: -400 };
-  this.size = { width: 20, height: 46 };
+  this.position = { x: 400, y: -200 };
+  this.hitBox = { width: 20, height: 46 };
   this.viewmodel = { width: 64, height: 64 };
   this.velocity = { x: 0, y: 0 };
   this.roundedVelocity = { x: 0, y: 0 };
 
   this.friction = 0.85;
-  this.speed = 8 * 64;
-  this.gravity = 40 * 64;
-  this.jumpHeight = 1.2 * 64;
+  this.accelleration = 2000;
+  this.gravity = 40 * tileSize;
+  this.jumpHeight = 1.5 * tileSize;
   this.grounded = false;
+  this.maxFall = 400 * tileSize;
+  this.maxVelocity = 600;
+
   this.movementDirectionY;
-  this.maxFall = 100 * 64;
+
+  this.nearBorders = [];
 
   this.sprite = {
     x: 0,
@@ -27,7 +31,7 @@ let player = new function () {
 
   this.update = function () {
     this.variableUpdate();
-    this.movment();
+    this.movement();
   }
 
   this.variableUpdate = function () {
@@ -53,11 +57,24 @@ let player = new function () {
     }
   }
 
-  this.movment = function () {
+  this.movement = function () {
     if (controls.touchControls) {
-      this.velocity.x = this.speed * joyStick.stickX / (joyStick.size / 2);
+      this.velocity.x = this.maxVelocity * joyStick.stickX / (joyStick.size / 2);
     } else {
-      this.velocity.x = this.speed * axis.horizontal;
+      if (!controls.right && !controls.left || controls.right && controls.left) {
+          this.velocity.x *= Math.pow(0.1, secondsPassed);
+      } else if (controls.right) {
+          this.velocity.x += this.accelleration * secondsPassed;
+      } else if (controls.left) {
+          this.velocity.x -= this.accelleration * secondsPassed;
+      }
+    }
+
+    if (this.velocity.x >= this.maxVelocity) {
+      this.velocity.x = this.maxVelocity;
+    }
+    if (this.velocity.x <= -this.maxVelocity) {
+        this.velocity.x = -this.maxVelocity;
     }
 
     this.movementDirectionY = this.velocity.y;
@@ -69,6 +86,8 @@ let player = new function () {
       } else {
         this.velocity.y = this.movementDirectionY;
       }
+
+      if (joyStick.stickY > (joyStick.size / 2) - 10 && !this.grounded) this.velocity.y += this.gravity * 2 * secondsPassed;
     } else {
       if (controls.up && this.grounded) {
         this.velocity.y = -Math.sqrt(this.jumpHeight * 2 * this.gravity);
@@ -76,15 +95,10 @@ let player = new function () {
       } else {
         this.velocity.y = this.movementDirectionY;
       }
-    }
 
-    if (controls.down && !this.grounded) {
-      this.velocity.y += this.gravity * 2 * secondsPassed;
+      if (controls.down && !this.grounded) this.velocity.y += this.gravity * 2 * secondsPassed;
     }
-
-    if (!this.grounded) {
-      this.velocity.y += this.gravity * secondsPassed;
-    }
+    this.velocity.y += this.gravity * secondsPassed;
 
     if (this.velocity.y > this.maxFall) {
       this.velocity.y = this.maxFall;
@@ -93,28 +107,26 @@ let player = new function () {
     this.roundedVelocity.x = Math.trunc(this.velocity.x * secondsPassed);
     this.roundedVelocity.y = Math.trunc(this.velocity.y * secondsPassed);
 
-    let horizontalRect = {
+    this.horizontalRect = {
       x: this.position.x + this.roundedVelocity.x,
       y: this.position.y,
-      width: this.size.width,
-      height: this.size.height
+      width: this.hitBox.width,
+      height: this.hitBox.height
     }
-    let verticalRect = {
+    this.verticalRect = {
       x: this.position.x,
       y: this.position.y + this.roundedVelocity.y,
-      width: this.size.width,
-      height: this.size.height
+      width: this.hitBox.width,
+      height: this.hitBox.height
     }
-    let rect = {
+    this.rect = {
       x: this.position.x,
       y: this.position.y,
-      width: this.size.width,
-      height: this.size.height
+      width: this.hitBox.width,
+      height: this.hitBox.height
     }
 
-    if (inAir(rect)) {
-      this.grounded = false;
-    }
+    if (intersecting(this.rect)) this.grounded = false;
 
     for (let i = 0; i < borders.length; i++) {
       if (
@@ -130,22 +142,22 @@ let player = new function () {
           height: borders[i].height
         }
 
-        if (checkIntersection(horizontalRect, borderRect)) {
-          while (checkIntersection(horizontalRect, borderRect)) {
-            horizontalRect.x -= Math.sign(this.roundedVelocity.x);
+        if (checkIntersection(this.horizontalRect, borderRect)) {
+          while (checkIntersection(this.horizontalRect, borderRect)) {
+            this.horizontalRect.x -= Math.sign(this.roundedVelocity.x);
           }
-          this.position.x = horizontalRect.x;
+          this.position.x = this.horizontalRect.x;
           this.roundedVelocity.x = 0;
           this.velocity.x = 0;
         }
-        if (checkIntersection(verticalRect, borderRect)) {
-          if (groundCheck(verticalRect, borderRect)) {
+        if (checkIntersection(this.verticalRect, borderRect)) {
+          if (groundCheck(this.verticalRect, borderRect)) {
             this.grounded = true;
           }
-          while (checkIntersection(verticalRect, borderRect)) {
-            verticalRect.y -= Math.sign(this.roundedVelocity.y);
+          while (checkIntersection(this.verticalRect, borderRect)) {
+            this.verticalRect.y -= Math.sign(this.roundedVelocity.y);
           }
-          this.position.y = verticalRect.y;
+          this.position.y = this.verticalRect.y;
           this.roundedVelocity.y = 0;
           this.velocity.y = 0;
         }
@@ -162,8 +174,8 @@ let player = new function () {
       this.sprite.y,
       this.sprite.width,
       this.sprite.width,
-      this.position.x - (this.viewmodel.width - this.size.width) / 2,
-      this.position.y - (this.viewmodel.height - this.size.height) / 2,
+      this.position.x - (this.viewmodel.width - this.hitBox.width) / 2,
+      this.position.y - (this.viewmodel.height - this.hitBox.height) / 2,
       this.viewmodel.width,
       this.viewmodel.height
     );

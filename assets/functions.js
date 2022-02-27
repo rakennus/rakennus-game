@@ -1,4 +1,4 @@
-function inAir(r1) {
+function intersecting(r1) {
     let a = true;
     for (var i = 0; i < borders.length; i++) {
         let r2 = {

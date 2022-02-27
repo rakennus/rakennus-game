@@ -9,10 +9,10 @@ function Border(x, y, width, height, material) {
     this.floor = document.getElementById('floor');
 
     this.draw = function () {
-        if (this.material == "dirt") {
+        if (this.material == "stone") {
             ctx.drawImage(this.dirt, 0, 0, 8, 8, this.x, this.y, this.width, this.height);
         } else {
-            ctx.drawImage(this.floor, 0, 0, 8, 8, this.x, this.y, this.width, this.height);
+            ctx.drawImage(this.floor, 0, 0, this.floor.width, this.floor.height, this.x, this.y, this.width, this.height);
         }
     }
 }

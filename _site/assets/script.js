@@ -1,13 +1,13 @@
 "use strict";
 let canvas;
 let ctx;
+let rect = null;
 
 let secondsPassed = 0;
 let oldTimeStamp = 0;
 let fps = 0;
 
-let fixedUpdateTime = 0;
-let fixedUpdateCount = 0;
+let ratio = 0;
 
 let controls = {
     left: false,
@@ -21,6 +21,7 @@ let controls = {
 }
 
 let borders = [];
+let enemies = [];
 
 let map = document.getElementById('map');
 let mapCanvas = document.getElementById('map-canvas');
@@ -28,16 +29,26 @@ let ctxMap = mapCanvas.getContext('2d');
 
 let background = document.getElementById("background");
 
-let mapLegend = {
-    stone: [19, 19, 19],
-}
+let mapLegend = [
+    {name: "stone" , r: 19, g: 19, b: 19},
+]
+
+let tileSize = 32;
 
 window.onload = (event) => {
     canvas = document.getElementById('canvas');
     ctx = canvas.getContext('2d');
 
-    canvas.width = document.documentElement.clientWidth - 100;
-    canvas.height = document.documentElement.clientHeight - 100;
+    myGameArea.canvasStyle();
+
+    window.addEventListener('resize', () => {
+        myGameArea.canvasStyle();
+    });
+
+    rect = canvas.getBoundingClientRect();
+
+    document.addEventListener("keydown", keyDownHandler, false);
+    document.addEventListener("keyup", keyUpHandler, false);
 
     canvas.addEventListener("touchstart", TouchHandleStart, false);
     canvas.addEventListener("touchmove", TouchHandleMove, false);
@@ -58,14 +69,24 @@ let myGameArea = {
         for (let i = 0; i < mapCanvas.height; i++) {
             for (let j = 0; j < mapCanvas.width; j++) {
                 let mapPixel = ctxMap.getImageData(j, i, 1, 1).data;
-                if (mapPixel[0] == mapLegend.stone[0] && mapPixel[1] == mapLegend.stone[1] && mapPixel[2] == mapLegend.stone[2]) {
-                    borders.push(new Border(j * 32, i * 32, 33, 33, "dirt"));
-                }
+                mapLegend.forEach(material => {
+                    if (mapPixel[0] == material.r && mapPixel[1] == material.g && mapPixel[2] == material.b) {
+                        borders.push(new Border(j * tileSize, i * tileSize, tileSize, tileSize));
+                    }
+                });
             }
         }
 
+        enemies.push(new Enemie(200, -400))
+
         // Start the first frame request
         window.requestAnimationFrame(gameLoop);
+    },
+    canvasStyle: function () {
+        canvas.width = document.documentElement.clientWidth - 20;
+        canvas.height = document.documentElement.clientHeight - 20;
+
+        ratio = canvas.width / canvas.clientWidth;
     }
 }
 
@@ -74,6 +95,7 @@ function gameLoop(timeStamp) {
 
     // Calculate the number of seconds passed since the last frame
     secondsPassed = (timeStamp - oldTimeStamp) / 1000;
+    if (secondsPassed > 0.1) secondsPassed = 0.1; 
     oldTimeStamp = timeStamp;
 
     // Calculate fps
@@ -93,14 +115,12 @@ function gameLoop(timeStamp) {
 function update() {
     cameraMovement.update();
     player.update();
-    joyStick.update();
+    if (controls.touchControls) joyStick.update();
 
-    fixedUpdateTime += secondsPassed;
-    if (fixedUpdateTime >= fixedUpdateCount) { fixedUpdate(); fixedUpdateCount += 0.01 };
-}
-
-function fixedUpdate() {
-    axis.update();
+    for (let i = 0; i < enemies.length; i++) {
+        const enemie = enemies[i];
+        enemie.update();
+    }
 }
 
 function draw() {
@@ -116,128 +136,48 @@ function draw() {
 
     // draw player
     player.draw();
+    if (controls.touchControls) joyStick.draw();
 
-    if (controls.touchControls) {
-        joyStick.draw();
+    for (let i = 0; i < enemies.length; i++) {
+        const enemie = enemies[i];
+        enemie.draw();
     }
 
     // draw fps
     ctx.font = '12px Arial';
     ctx.fillStyle = 'black';
     ctx.fillText("FPS: " + fps, -cameraMovement.x + 4, -cameraMovement.y + 14);
-    ctx.fillText((controls.start.x - controls.end.x) + ' | ' + (controls.start.y - controls.end.y), -cameraMovement.x + 60, -cameraMovement.y + 14);
 }
 
-let cameraMovement = new function () {
-    this.x = 0;
-    this.y = 0;
+function keyDownHandler(e) {
+    controls.touchControls = false;
 
-    this.boxHeight = 0;
-    this.boxWidth = 0;
-    this.boxOffsetX = 0;
-    this.boxOffsetY = 0;
-
-    this.update = function () {
-        if (player.position.x + player.size.width > canvas.width / 2 - this.boxWidth / 2 + this.boxOffsetX + this.boxWidth) {
-            this.boxOffsetX += (player.position.x + player.size.width) - (canvas.width / 2 - this.boxWidth / 2 + this.boxOffsetX + this.boxWidth);
-        }
-        if (player.position.x < canvas.width / 2 - this.boxWidth / 2 + this.boxOffsetX) {
-            this.boxOffsetX += player.position.x - (canvas.width / 2 - this.boxWidth / 2 + this.boxOffsetX);
-        }
-        if (player.position.y + player.size.height > canvas.height / 2 - this.boxHeight / 2 + this.boxOffsetY + this.boxHeight) {
-            this.boxOffsetY += (player.position.y + player.size.height) - (canvas.height / 2 - this.boxHeight / 2 + this.boxOffsetY + this.boxHeight);
-        }
-        if (player.position.y < canvas.height / 2 - this.boxHeight / 2 + this.boxOffsetY) {
-            this.boxOffsetY += player.position.y - (canvas.height / 2 - this.boxHeight / 2 + this.boxOffsetY);
-        }
-
-        this.x = -this.boxOffsetX;
-        this.y = -this.boxOffsetY;
-
-        ctx.translate(this.x, this.y);
+    if (e.key == "Right" || e.key == "ArrowRight" || e.key == "d" || e.key == "D") {
+        controls.right = true;
+    }
+    else if (e.key == "Left" || e.key == "ArrowLeft" || e.key == "a" || e.key == "A") {
+        controls.left = true;
+    }
+    else if (e.key == "Up" || e.key == "ArrowUp" || e.key == "w" || e.key == "W") {
+        controls.up = true;
+    }
+    else if (e.key == "Down" || e.key == "ArrowDown" || e.key == "s" || e.key == "S") {
+        controls.down = true;
     }
 }
 
-function checkIntersection(r1, r2) {
-    if (r1.x >= r2.x + r2.width) {
-        return false;
-    } else if (r1.x + r1.width <= r2.x) {
-        return false;
-    } else if (r1.y >= r2.y + r2.height) {
-        return false;
-    } else if (r1.y + r1.height <= r2.y) {
-        return false;
-    } else {
-        return true;
+function keyUpHandler(e) {
+    if (e.key == "Right" || e.key == "ArrowRight" || e.key == "d" || e.key == "D") {
+        controls.right = false;
     }
-}
-
-let axis = {
-    horizontal: 0,
-    vertical: 0,
-
-    update: function () {
-        if (!controls.left && !controls.right || controls.left && controls.right) {
-            this.horizontal *= 0.95;
-        } else if (controls.right) {
-            this.horizontal += 0.1;
-        } else if (controls.left) {
-            this.horizontal -= 0.1;
-        }
-
-        if (this.horizontal >= 1) {
-            this.horizontal = 1;
-        }
-        if (this.horizontal <= -1) {
-            this.horizontal = -1;
-        }
-
-        if (!controls.down && !controls.up || controls.down && controls.up) {
-            this.vertical = 0;
-        } else if (controls.down) {
-            this.vertical = -1;
-        } else if (controls.up) {
-            this.vertical = 1;
-        }
+    else if (e.key == "Left" || e.key == "ArrowLeft" || e.key == "a" || e.key == "A") {
+        controls.left = false;
     }
-}
-
-let joyStick = {
-    stickX: 0,
-    stickY: 0,
-    x: 0,
-    y: 0,
-    size: 120,
-    margin: 80,
-    padding: 20,
-
-    update: function () {
-        this.stickX = -(controls.start.x - controls.end.x);
-        this.stickY = -(controls.start.y - controls.end.y);
-
-        if (this.stickX > this.size / 2) {
-            this.stickX = this.size / 2;
-        } else if (this.stickX < -this.size / 2) {
-            this.stickX = -this.size / 2;
-        }
-
-        if (this.stickY > this.size / 2) {
-            this.stickY = this.size / 2;
-        } else if (this.stickY < -this.size / 2) {
-            this.stickY = -this.size / 2;
-        }
-    },
-    draw: function () {
-        this.x = -cameraMovement.x + this.size / 2 + this.margin;
-        this.y = -cameraMovement.y + canvas.height - this.size / 2 - this.margin;
-
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size / 2, 0, 2 * Math.PI);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(this.x + this.stickX, this.y + this.stickY, this.size / 2 - this.padding, 0, 2 * Math.PI);
-        ctx.fillStyle = "black";
-        ctx.fill();
+    else if (e.key == "Up" || e.key == "ArrowUp" || e.key == "w" || e.key == "W") {
+        controls.up = false;
+    }
+    else if (e.key == "Down" || e.key == "ArrowDown" || e.key == "s" || e.key == "S") {
+        controls.down = false;
     }
 }
 
@@ -246,18 +186,18 @@ function TouchHandleStart(event) {
     controls.touchControls = true;
 
     controls.touchStarted = true;
-    controls.start.x = event.changedTouches[0].pageX;
-    controls.start.y = event.changedTouches[0].pageY;
+    controls.start.x = (event.changedTouches[0].pageX - rect.left) * ratio;
+    controls.start.y = (event.changedTouches[0].pageY - rect.top) * ratio;
 
-    controls.end.x = event.changedTouches[0].pageX;
-    controls.end.y = event.changedTouches[0].pageY;
+    controls.end.x = (event.changedTouches[0].pageX - rect.left) * ratio;
+    controls.end.y = (event.changedTouches[0].pageY - rect.top) * ratio;
 };
 
 function TouchHandleMove(event) {
     event.preventDefault();
 
-    controls.end.x = event.changedTouches[0].pageX;
-    controls.end.y = event.changedTouches[0].pageY;
+    controls.end.x = (event.changedTouches[0].pageX - rect.left) * ratio;
+    controls.end.y = (event.changedTouches[0].pageY - rect.top) * ratio;
 };
 
 function TouchHandleEnd(event) {

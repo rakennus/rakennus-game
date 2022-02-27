@@ -1,5 +1,5 @@
-let player = new function () {
-  this.position = { x: 400, y: -200 };
+function Enemie (x, y) {
+  this.position = { x: x, y: y };
   this.hitBox = { width: 20, height: 46 };
   this.viewmodel = { width: 64, height: 64 };
   this.velocity = { x: 0, y: 0 };
@@ -58,46 +58,8 @@ let player = new function () {
   }
 
   this.movement = function () {
-    if (controls.touchControls) {
-      this.velocity.x = this.maxVelocity * joyStick.stickX / (joyStick.size / 2);
-    } else {
-      if (!controls.right && !controls.left || controls.right && controls.left) {
-          this.velocity.x *= Math.pow(0.1, secondsPassed);
-      } else if (controls.right) {
-          this.velocity.x += this.accelleration * secondsPassed;
-      } else if (controls.left) {
-          this.velocity.x -= this.accelleration * secondsPassed;
-      }
-    }
-
-    if (this.velocity.x >= this.maxVelocity) {
-      this.velocity.x = this.maxVelocity;
-    }
-    if (this.velocity.x <= -this.maxVelocity) {
-        this.velocity.x = -this.maxVelocity;
-    }
-
     this.movementDirectionY = this.velocity.y;
 
-    if (controls.touchControls) {
-      if (joyStick.stickY < -(joyStick.size / 2) + 10 && this.grounded) {
-        this.velocity.y = -Math.sqrt(this.jumpHeight * 2 * this.gravity);
-        this.grounded = false;
-      } else {
-        this.velocity.y = this.movementDirectionY;
-      }
-
-      if (joyStick.stickY > (joyStick.size / 2) - 10 && !this.grounded) this.velocity.y += this.gravity * 2 * secondsPassed;
-    } else {
-      if (controls.up && this.grounded) {
-        this.velocity.y = -Math.sqrt(this.jumpHeight * 2 * this.gravity);
-        this.grounded = false;
-      } else {
-        this.velocity.y = this.movementDirectionY;
-      }
-
-      if (controls.down && !this.grounded) this.velocity.y += this.gravity * 2 * secondsPassed;
-    }
     this.velocity.y += this.gravity * secondsPassed;
 
     if (this.velocity.y > this.maxFall) {
@@ -130,10 +92,10 @@ let player = new function () {
 
     for (let i = 0; i < borders.length; i++) {
       if (
-        borders[i].x > -cameraMovement.x &&
-        borders[i].y > -cameraMovement.y &&
-        borders[i].x < canvas.width - cameraMovement.x &&
-        borders[i].y < canvas.height - cameraMovement.y
+        borders[i].x > this.position.x - 100 &&
+        borders[i].y > this.position.y - 100 &&
+        borders[i].x < this.position.x + 100 &&
+        borders[i].y < this.position.y + 100
       ) {
         let borderRect = {
           x: borders[i].x,
