@@ -152,33 +152,17 @@ function draw() {
 function keyDownHandler(e) {
     controls.touchControls = false;
 
-    if (e.key == "Right" || e.key == "ArrowRight" || e.key == "d" || e.key == "D") {
-        controls.right = true;
-    }
-    else if (e.key == "Left" || e.key == "ArrowLeft" || e.key == "a" || e.key == "A") {
-        controls.left = true;
-    }
-    else if (e.key == "Up" || e.key == "ArrowUp" || e.key == "w" || e.key == "W") {
-        controls.up = true;
-    }
-    else if (e.key == "Down" || e.key == "ArrowDown" || e.key == "s" || e.key == "S") {
-        controls.down = true;
-    }
+    if (e.key == "Right" || e.key == "ArrowRight" || e.key == "d" || e.key == "D") controls.right = true;
+    if (e.key == "Left" || e.key == "ArrowLeft" || e.key == "a" || e.key == "A") controls.left = true;
+    if (e.key == "Up" || e.key == "ArrowUp" || e.key == "w" || e.key == "W") controls.up = true;
+    if (e.key == "Down" || e.key == "ArrowDown" || e.key == "s" || e.key == "S") controls.down = true;
 }
 
 function keyUpHandler(e) {
-    if (e.key == "Right" || e.key == "ArrowRight" || e.key == "d" || e.key == "D") {
-        controls.right = false;
-    }
-    else if (e.key == "Left" || e.key == "ArrowLeft" || e.key == "a" || e.key == "A") {
-        controls.left = false;
-    }
-    else if (e.key == "Up" || e.key == "ArrowUp" || e.key == "w" || e.key == "W") {
-        controls.up = false;
-    }
-    else if (e.key == "Down" || e.key == "ArrowDown" || e.key == "s" || e.key == "S") {
-        controls.down = false;
-    }
+    if (e.key == "Right" || e.key == "ArrowRight" || e.key == "d" || e.key == "D") controls.right = false;
+    if (e.key == "Left" || e.key == "ArrowLeft" || e.key == "a" || e.key == "A") controls.left = false;
+    if (e.key == "Up" || e.key == "ArrowUp" || e.key == "w" || e.key == "W") controls.up = false;
+    if (e.key == "Down" || e.key == "ArrowDown" || e.key == "s" || e.key == "S") controls.down = false;
 }
 
 function TouchHandleStart(event) {
