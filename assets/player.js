@@ -130,10 +130,10 @@ let player = new function () {
 
     for (let i = 0; i < borders.length; i++) {
       if (
-        borders[i].x > -cameraMovement.x &&
-        borders[i].y > -cameraMovement.y &&
-        borders[i].x < canvas.width - cameraMovement.x &&
-        borders[i].y < canvas.height - cameraMovement.y
+        borders[i].x > this.position.x + this.hitBox.width / 2 - tileSize - this.hitBox.width &&
+        borders[i].y > this.position.y + this.hitBox.height / 2 - tileSize - this.hitBox.height &&
+        borders[i].x < this.position.x + this.hitBox.width / 2 + tileSize + this.hitBox.width &&
+        borders[i].y < this.position.y + this.hitBox.height / 2 + tileSize + this.hitBox.height
       ) {
         let borderRect = {
           x: borders[i].x,
