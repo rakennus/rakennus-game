@@ -1,4 +1,5 @@
 "use strict";
+// global variable declaration
 let canvas;
 let ctx;
 let rect = null;
