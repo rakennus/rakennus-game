@@ -7,8 +7,8 @@ let player = new function () {
 
   this.friction = 0.85;
   this.accelleration = 2000;
-  this.gravity = 40 * tileSize;
-  this.jumpHeight = 1.5 * tileSize;
+  this.gravity = 30 * tileSize;
+  this.jumpHeight = 2 * tileSize;
   this.grounded = false;
   this.maxFall = 400 * tileSize;
   this.maxVelocity = 600;

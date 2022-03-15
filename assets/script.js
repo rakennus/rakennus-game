@@ -31,7 +31,7 @@ let ctxMap = mapCanvas.getContext('2d');
 let background = document.getElementById("background");
 
 let mapLegend = [
-    {name: "stone" , r: 19, g: 19, b: 19},
+    { name: "stone", r: 21, g: 21, b: 21 },
 ]
 
 let tileSize = 32;
@@ -72,9 +72,10 @@ let myGameArea = {
                 let mapPixel = ctxMap.getImageData(j, i, 1, 1).data;
                 mapLegend.forEach(material => {
                     if (mapPixel[0] == material.r && mapPixel[1] == material.g && mapPixel[2] == material.b) {
-                        borders.push(new Border(j * tileSize, i * tileSize, tileSize, tileSize));
+                        borders.push(new Border(j * (tileSize - 1), i * (tileSize - 1), tileSize, tileSize));
                     }
                 });
+                console.log(mapPixel[1]);
             }
         }
 
@@ -96,7 +97,7 @@ function gameLoop(timeStamp) {
 
     // Calculate the number of seconds passed since the last frame
     secondsPassed = (timeStamp - oldTimeStamp) / 1000;
-    if (secondsPassed > 0.1) secondsPassed = 0.1; 
+    if (secondsPassed > 0.2) secondsPassed = 0.2;
     oldTimeStamp = timeStamp;
 
     // Calculate fps
