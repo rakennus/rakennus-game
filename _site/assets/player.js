@@ -1,17 +1,16 @@
 let player = new function () {
-  this.position = { x: 400, y: -200 };
   this.hitBox = { width: 20, height: 46 };
   this.viewmodel = { width: 64, height: 64 };
+  this.position = { x: 400, y: -200 };
   this.velocity = { x: 0, y: 0 };
-  this.roundedVelocity = { x: 0, y: 0 };
 
-  this.friction = 0.85;
+  this.friction = 0.001;
   this.accelleration = 2000;
-  this.gravity = 30 * tileSize;
+  this.gravity = 40 * tileSize;
   this.jumpHeight = 2 * tileSize;
   this.grounded = false;
-  this.maxFall = 400 * tileSize;
-  this.maxVelocity = 600;
+  this.jumping = false;
+  this.maxVelocity = { x: 600, y: 1000 };
 
   this.movementDirectionY;
 
@@ -62,19 +61,19 @@ let player = new function () {
       this.velocity.x = this.maxVelocity * joyStick.stickX / (joyStick.size / 2);
     } else {
       if (!controls.right && !controls.left || controls.right && controls.left) {
-          this.velocity.x *= Math.pow(0.1, secondsPassed);
+        this.velocity.x *= Math.pow(this.friction, secondsPassed);
       } else if (controls.right) {
-          this.velocity.x += this.accelleration * secondsPassed;
+        this.velocity.x += this.accelleration * secondsPassed;
       } else if (controls.left) {
-          this.velocity.x -= this.accelleration * secondsPassed;
+        this.velocity.x -= this.accelleration * secondsPassed;
       }
     }
 
-    if (this.velocity.x >= this.maxVelocity) {
-      this.velocity.x = this.maxVelocity;
+    if (this.velocity.x >= this.maxVelocity.x) {
+      this.velocity.x = this.maxVelocity.x;
     }
-    if (this.velocity.x <= -this.maxVelocity) {
-        this.velocity.x = -this.maxVelocity;
+    if (this.velocity.x <= -this.maxVelocity.x) {
+      this.velocity.x = -this.maxVelocity.x;
     }
 
     this.movementDirectionY = this.velocity.y;
@@ -83,39 +82,42 @@ let player = new function () {
       if (joyStick.stickY < -(joyStick.size / 2) + 10 && this.grounded) {
         this.velocity.y = -Math.sqrt(this.jumpHeight * 2 * this.gravity);
         this.grounded = false;
+        this.jumping = true;
+      } else if (joyStick.stickY > (joyStick.size / 2) - 10 && !this.grounded) {
+        this.velocity.y += this.gravity * 2 * secondsPassed;
       } else {
         this.velocity.y = this.movementDirectionY;
       }
-
-      if (joyStick.stickY > (joyStick.size / 2) - 10 && !this.grounded) this.velocity.y += this.gravity * 2 * secondsPassed;
     } else {
       if (controls.up && this.grounded) {
         this.velocity.y = -Math.sqrt(this.jumpHeight * 2 * this.gravity);
         this.grounded = false;
+        this.jumping = true;
+      } else if (controls.down && !this.grounded) {
+        this.velocity.y += this.gravity * 2 * secondsPassed;
       } else {
         this.velocity.y = this.movementDirectionY;
       }
-
-      if (controls.down && !this.grounded) this.velocity.y += this.gravity * 2 * secondsPassed;
     }
+
     this.velocity.y += this.gravity * secondsPassed;
 
-    if (this.velocity.y > this.maxFall) {
-      this.velocity.y = this.maxFall;
+    if (this.velocity.y >= this.maxVelocity.y) {
+      this.velocity.y = this.maxVelocity.y;
+    }
+    if (this.velocity.y <= -this.maxVelocity.y) {
+      this.velocity.y = -this.maxVelocity.y;
     }
 
-    this.roundedVelocity.x = Math.trunc(this.velocity.x * secondsPassed);
-    this.roundedVelocity.y = Math.trunc(this.velocity.y * secondsPassed);
-
     this.horizontalRect = {
-      x: this.position.x + this.roundedVelocity.x,
+      x: this.position.x + this.velocity.x * secondsPassed,
       y: this.position.y,
       width: this.hitBox.width,
       height: this.hitBox.height
     }
     this.verticalRect = {
       x: this.position.x,
-      y: this.position.y + this.roundedVelocity.y,
+      y: this.position.y + this.velocity.y * secondsPassed,
       width: this.hitBox.width,
       height: this.hitBox.height
     }
@@ -144,28 +146,27 @@ let player = new function () {
 
         if (checkIntersection(this.horizontalRect, borderRect)) {
           while (checkIntersection(this.horizontalRect, borderRect)) {
-            this.horizontalRect.x -= Math.sign(this.roundedVelocity.x);
+            this.horizontalRect.x -= Math.sign(this.velocity.x);
           }
           this.position.x = this.horizontalRect.x;
-          this.roundedVelocity.x = 0;
           this.velocity.x = 0;
         }
         if (checkIntersection(this.verticalRect, borderRect)) {
           if (groundCheck(this.verticalRect, borderRect)) {
             this.grounded = true;
+            this.jumping = false;
           }
           while (checkIntersection(this.verticalRect, borderRect)) {
-            this.verticalRect.y -= Math.sign(this.roundedVelocity.y);
+            this.verticalRect.y -= Math.sign(this.velocity.y);
           }
           this.position.y = this.verticalRect.y;
-          this.roundedVelocity.y = 0;
           this.velocity.y = 0;
         }
       }
     }
 
-    this.position.x += this.roundedVelocity.x;
-    this.position.y += this.roundedVelocity.y;
+    this.position.x += this.velocity.x * secondsPassed;
+    this.position.y += this.velocity.y * secondsPassed;
   }
   this.draw = function () {
     ctx.drawImage(
@@ -174,8 +175,8 @@ let player = new function () {
       this.sprite.y,
       this.sprite.width,
       this.sprite.width,
-      this.position.x - (this.viewmodel.width - this.hitBox.width) / 2,
-      this.position.y - (this.viewmodel.height - this.hitBox.height) / 2,
+      Math.trunc(this.position.x) - (this.viewmodel.width - this.hitBox.width) / 2,
+      Math.trunc(this.position.y) - (this.viewmodel.height - this.hitBox.height) / 2,
       this.viewmodel.width,
       this.viewmodel.height
     );

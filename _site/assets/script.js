@@ -75,7 +75,6 @@ let myGameArea = {
                         borders.push(new Border(j * (tileSize - 1), i * (tileSize - 1), tileSize, tileSize));
                     }
                 });
-                console.log(mapPixel[1]);
             }
         }
 
@@ -85,8 +84,11 @@ let myGameArea = {
         window.requestAnimationFrame(gameLoop);
     },
     canvasStyle: function () {
-        canvas.width = document.documentElement.clientWidth - 20;
-        canvas.height = document.documentElement.clientHeight - 20;
+        /* canvas.width = document.documentElement.clientWidth - 20;
+        canvas.height = document.documentElement.clientHeight - 20; */
+
+        canvas.width = 1200;
+        canvas.height = 1200*document.documentElement.clientHeight/document.documentElement.clientWidth;
 
         ratio = canvas.width / canvas.clientWidth;
     }
@@ -115,8 +117,8 @@ function gameLoop(timeStamp) {
 }
 
 function update() {
-    cameraMovement.update();
     player.update();
+    cameraMovement.update();
     if (controls.touchControls) joyStick.update();
 
     for (let i = 0; i < enemies.length; i++) {
