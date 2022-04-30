@@ -61,8 +61,6 @@ window.onload = (event) => {
 
 let myGameArea = {
     load: function () {
-        ctx.imageSmoothingEnabled = false;
-
         mapCanvas.width = map.width;
         mapCanvas.height = map.height;
         ctxMap.drawImage(map, 0, 0, map.width, map.height);
@@ -84,13 +82,12 @@ let myGameArea = {
         window.requestAnimationFrame(gameLoop);
     },
     canvasStyle: function () {
-        /* canvas.width = document.documentElement.clientWidth - 20;
-        canvas.height = document.documentElement.clientHeight - 20; */
-
-        canvas.width = 1200;
-        canvas.height = 1200*document.documentElement.clientHeight/document.documentElement.clientWidth;
+        canvas.width = document.documentElement.clientWidth - 20;
+        canvas.height = document.documentElement.clientHeight - 20;
 
         ratio = canvas.width / canvas.clientWidth;
+        
+        ctx.imageSmoothingEnabled = false;
     }
 }
 
@@ -99,7 +96,7 @@ function gameLoop(timeStamp) {
 
     // Calculate the number of seconds passed since the last frame
     secondsPassed = (timeStamp - oldTimeStamp) / 1000;
-    if (secondsPassed > 0.2) secondsPassed = 0.2;
+    if (secondsPassed > 0.1) secondsPassed = 0.1;
     oldTimeStamp = timeStamp;
 
     // Calculate fps
