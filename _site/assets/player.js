@@ -5,12 +5,12 @@ let player = new function () {
   this.velocity = { x: 0, y: 0 };
 
   this.friction = 0.0005;
-  this.accelleration = 80 * tileSize;
-  this.gravity = 80 * tileSize;
+  this.accelleration = 40 * tileSize;
+  this.gravity = 60 * tileSize;
   this.jumpHeight = 1.5 * tileSize;
   this.grounded = false;
   this.jumping = false;
-  this.maxVelocity = { x: 600, y: 1000 };
+  this.maxVelocity = { x: 400, y: 1000 };
 
   this.movementDirectionY;
 

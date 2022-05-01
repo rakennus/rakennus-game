@@ -8,7 +8,7 @@ let cameraMovement = new function () {
     this.boxOffsetY = 0;
 
     this.update = function () {
-        if (player.position.x + player.hitBox.width > canvas.width / 2 - this.boxWidth / 2 + this.boxOffsetX + this.boxWidth) {
+        if (player.position.x + player.hitBox.width / 2 > canvas.width / 2 - this.boxWidth * 1.5 + this.boxOffsetX) {
             this.boxOffsetX += (player.position.x + player.hitBox.width) - (canvas.width / 2 - this.boxWidth / 2 + this.boxOffsetX + this.boxWidth);
         }
         if (player.position.x < canvas.width / 2 - this.boxWidth / 2 + this.boxOffsetX) {

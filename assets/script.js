@@ -28,8 +28,9 @@ let map = document.getElementById('map');
 let mapCanvas = document.getElementById('map-canvas');
 let ctxMap = mapCanvas.getContext('2d');
 
-let background = document.getElementById("background");
+// let background = document.getElementById("background");
 
+let mapThreshold = 5;
 let mapLegend = [
     { name: "stone", r: 21, g: 21, b: 21 },
 ]
@@ -69,7 +70,11 @@ let myGameArea = {
             for (let j = 0; j < mapCanvas.width; j++) {
                 let mapPixel = ctxMap.getImageData(j, i, 1, 1).data;
                 mapLegend.forEach(material => {
-                    if (mapPixel[0] == material.r && mapPixel[1] == material.g && mapPixel[2] == material.b) {
+                    if (
+                        mapPixel[0] >= material.r - mapThreshold && mapPixel[0] <= material.r + mapThreshold &&
+                        mapPixel[1] >= material.g - mapThreshold && mapPixel[1] <= material.g + mapThreshold &&
+                        mapPixel[2] >= material.b - mapThreshold && mapPixel[2] <= material.b + mapThreshold
+                    ) {
                         borders.push(new Border(j * (tileSize - 1), i * (tileSize - 1), tileSize, tileSize));
                     }
                 });
@@ -86,7 +91,7 @@ let myGameArea = {
         canvas.height = document.documentElement.clientHeight - 20;
 
         ratio = canvas.width / canvas.clientWidth;
-        
+
         ctx.imageSmoothingEnabled = false;
     }
 }
