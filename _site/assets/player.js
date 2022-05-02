@@ -58,7 +58,7 @@ let player = new function () {
 
   this.movement = function () {
     if (controls.touchControls) {
-      this.velocity.x = this.maxVelocity * joyStick.stickX / (joyStick.size / 2);
+      this.velocity.x = this.maxVelocity.x * joyStick.stickX / (joyStick.size / 2);
     } else {
       if (!controls.right && !controls.left || controls.right && controls.left) {
         this.velocity.x *= Math.pow(this.friction, secondsPassed);
@@ -175,8 +175,8 @@ let player = new function () {
       this.sprite.y,
       this.sprite.width,
       this.sprite.width,
-      Math.trunc(this.position.x) - (this.viewmodel.width - this.hitBox.width) / 2,
-      Math.trunc(this.position.y) - (this.viewmodel.height - this.hitBox.height) / 2,
+      Math.ceil(this.position.x) - (this.viewmodel.width - this.hitBox.width) / 2,
+      Math.ceil(this.position.y) - (this.viewmodel.height - this.hitBox.height) / 2,
       this.viewmodel.width,
       this.viewmodel.height
     );

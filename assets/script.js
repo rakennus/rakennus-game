@@ -171,27 +171,27 @@ function keyUpHandler(e) {
     if (e.key == "Down" || e.key == "ArrowDown" || e.key == "s" || e.key == "S") controls.down = false;
 }
 
-function TouchHandleStart(event) {
-    event.preventDefault();
+function TouchHandleStart(e) {
+    e.preventDefault();
     controls.touchControls = true;
 
     controls.touchStarted = true;
-    controls.start.x = (event.changedTouches[0].pageX - rect.left) * ratio;
-    controls.start.y = (event.changedTouches[0].pageY - rect.top) * ratio;
+    controls.start.x = (e.changedTouches[0].pageX - rect.left) * ratio;
+    controls.start.y = (e.changedTouches[0].pageY - rect.top) * ratio;
 
-    controls.end.x = (event.changedTouches[0].pageX - rect.left) * ratio;
-    controls.end.y = (event.changedTouches[0].pageY - rect.top) * ratio;
+    controls.end.x = (e.changedTouches[0].pageX - rect.left) * ratio;
+    controls.end.y = (e.changedTouches[0].pageY - rect.top) * ratio;
 };
 
-function TouchHandleMove(event) {
-    event.preventDefault();
+function TouchHandleMove(e) {
+    e.preventDefault();
 
-    controls.end.x = (event.changedTouches[0].pageX - rect.left) * ratio;
-    controls.end.y = (event.changedTouches[0].pageY - rect.top) * ratio;
+    controls.end.x = (e.changedTouches[0].pageX - rect.left) * ratio;
+    controls.end.y = (e.changedTouches[0].pageY - rect.top) * ratio;
 };
 
-function TouchHandleEnd(event) {
-    event.preventDefault();
+function TouchHandleEnd(e) {
+    e.preventDefault();
 
     controls.start.x = 0;
     controls.start.y = 0;
