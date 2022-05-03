@@ -79,11 +79,11 @@ let player = new function () {
     this.movementDirectionY = this.velocity.y;
 
     if (controls.touchControls) {
-      if (joyStick.stickY < -(joyStick.size / 2) + 10 && this.grounded) {
+      if (joyStick.stickY < -(joyStick.size / 2) + 20 && this.grounded) {
         this.velocity.y = -Math.sqrt(this.jumpHeight * 2 * this.gravity);
         this.grounded = false;
         this.jumping = true;
-      } else if (joyStick.stickY > (joyStick.size / 2) - 10 && !this.grounded) {
+      } else if (joyStick.stickY > (joyStick.size / 2) - 20 && !this.grounded) {
         this.velocity.y += this.gravity * 2 * secondsPassed;
       } else {
         this.velocity.y = this.movementDirectionY;
