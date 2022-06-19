@@ -33,7 +33,7 @@ let joyStick = {
         if (controls.touchStarted) {
 
             ctx.beginPath();
-            ctx.arc(-cameraMovement.x + controls.start.x, -cameraMovement.y + controls.start.y, this.size / 2 + this.padding, 0, 2 * Math.PI);
+            ctx.arc(cameraMovement.x + controls.start.x, cameraMovement.y + controls.start.y, this.size / 2 + this.padding, 0, 2 * Math.PI);
 
             ctx.globalAlpha = 0.6;
             ctx.fillStyle = this.color;
@@ -45,7 +45,7 @@ let joyStick = {
             ctx.stroke();
 
             ctx.beginPath();
-            ctx.arc(-cameraMovement.x + controls.start.x, -cameraMovement.y + controls.start.y, this.size / 2 - this.padding, 0, 2 * Math.PI);
+            ctx.arc(cameraMovement.x + controls.start.x, cameraMovement.y + controls.start.y, this.size / 2 - this.padding, 0, 2 * Math.PI);
 
             ctx.globalAlpha = 1;
             ctx.fillStyle = this.contrastColor;
@@ -56,7 +56,7 @@ let joyStick = {
             ctx.stroke();
 
             ctx.beginPath();
-            ctx.arc(-cameraMovement.x + controls.start.x + this.stickX, -cameraMovement.y + controls.start.y + this.stickY, this.size / 2, 0, 2 * Math.PI);
+            ctx.arc(cameraMovement.x + controls.start.x + this.stickX, cameraMovement.y + controls.start.y + this.stickY, this.size / 2, 0, 2 * Math.PI);
             ctx.fillStyle = this.color;
             ctx.fill();
             ctx.lineWidth = 4;

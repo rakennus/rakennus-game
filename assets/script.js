@@ -131,9 +131,9 @@ function update() {
 
 function draw() {
     // Clear the entire canvas
-    ctx.clearRect(-cameraMovement.x, -cameraMovement.y, canvas.width, canvas.height);
+    ctx.clearRect(cameraMovement.x, cameraMovement.y, canvas.width, canvas.height);
 
-    // ctx.drawImage(background, 0, 0, background.width, background.height, -cameraMovement.x, -cameraMovement.y, canvas.width, canvas.height);
+    // ctx.drawImage(background, 0, 0, background.width, background.height, cameraMovement.x, cameraMovement.y, canvas.width, canvas.height);
 
     // draw borders
     borders.forEach(element => {
@@ -152,7 +152,7 @@ function draw() {
     // draw fps
     ctx.font = '12px Arial';
     ctx.fillStyle = 'black';
-    ctx.fillText("FPS: " + fps, -cameraMovement.x + 4, -cameraMovement.y + 14);
+    ctx.fillText("FPS: " + fps, cameraMovement.x + 4, cameraMovement.y + 14);
 }
 
 function keyDownHandler(e) {
